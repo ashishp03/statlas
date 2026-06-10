@@ -40,3 +40,7 @@ useful raw material for later phases (esp. Track 1 Phase 4 Text-to-SQL).
   Suggested — T1: 3Blue1Brown "But what is a neural network?" (ep.1) + ep.2 gradient descent (~45 min).
   T2: skim docs.claude.com overview, write one-line defs of skill/tool/MCP/connector/plugin/agent (~30 min).
   Stretch: read intro of Illustrated Transformer. *Completed: (awaiting Ashish's input.)*
+- **2026-06-10 (day2)** — Still Track 1 Phase 0 / Track 2 Phase A (no completion reported yet for day1).
+  Suggested — T1: finish 3Blue1Brown ep.3 backprop + ep.4 backprop calculus (~30 min).
+  T2: finalize one-line defs of the 6 core terms + map each to Statlas (~30 min).
+  Stretch: start Illustrated Transformer through "self-attention at a high level." *Completed: (awaiting Ashish's input.)*
