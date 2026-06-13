@@ -7,6 +7,12 @@
 - **Track 2:** Lock in the six core terms — finish one-line definitions of skill, tool, MCP, connector, plugin, agent, and jot how each maps to Statlas (e.g. MCP = the `statmuse-clone` server you'll build in Phase E). ~30 min.
 - **Stretch:** Start Jay Alammar's "The Illustrated Transformer" — just through the "self-attention at a high level" section.
 
+## Coach note (plan overhaul)
+- Ashish has an MS in Data Science / BS in CS+DS — intro phases dropped. Plan upgraded to
+  advanced, sequential, practice/paper/video-based with homework notebooks. See `curriculum.md`.
+- Built **M1 — Transformer internals** and **M2 — NLU & entity resolution** (workbook + notebook each).
+- Real next step supersedes the 3B1B suggestion above → start `learning/modules/01-transformer-internals/`.
+
 ## What I actually did
 - _(awaiting Ashish's input)_
 
