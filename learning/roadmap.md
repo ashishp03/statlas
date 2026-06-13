@@ -64,6 +64,10 @@ You have an MS in Data Science, so most of this is review — use it as a checkl
 *If any are shaky, fix that one first — everything else builds on them.*
 
 ### Stage 1 — Neural networks & deep learning intuition
+> **MS-DS note:** you almost certainly know this — **skip it.** Only do the micrograd exercise
+> below if you've never implemented backprop *from scratch* and want to once. Otherwise jump to
+> Stage 3.
+
 **Why:** transformers are neural nets; you need the mental model of layers, weights, loss, and
 backprop before attention makes sense.
 - Intro (visual): **3Blue1Brown — Neural Networks** series (eps. 1–4). Best intuition for what a
