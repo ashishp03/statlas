@@ -1,13 +1,5 @@
-# Core
-duckdb>=1.0.0          # embedded OLAP database = the "calculator" that computes exact stats
-rapidfuzz>=3.0.0       # fuzzy string matching for the entity resolver (nicknames -> player)
-
-# Data ingestion (optional for v0; seed data works without it)
-nba_api>=1.4.0         # free NBA stats data source
-pandas>=2.0.0
-
-# LLM layer (you wire this in during Study Plan Phase 3/4 - optional for v0)
-# anthropic>=0.39.0    # uncomment when you add the function-calling parser
-
-# Dev
-pytest>=8.0.0
+# DEPRECATED — this project now uses uv (see pyproject.toml + uv.lock).
+# Setup:   uv sync
+# Add a dependency:   uv add <package>
+# Run something:      uv run statlas "your question"   |   uv run pytest
+# This file is kept only as a pointer and is no longer the source of truth.
