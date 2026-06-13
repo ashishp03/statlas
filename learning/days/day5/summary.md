@@ -18,6 +18,14 @@
 - Ran a full **EDA** on real 2025-26 NBA data → `days/day5/eda/` (report + 6 figures + cached CSVs).
 - **Pivoted to foundations-first**: decided to learn all required concepts from the ground up before
   building. Created `learning/roadmap.md` as the new master guide; parked `curriculum.md`.
+- **Completed roadmap Stage 3 — Transformers & attention** (the `TODAY.md` checklist, all 5 steps):
+  watched 3B1B "Attention visually explained," read the Illustrated Transformer, read *Attention Is
+  All You Need* §3.1–3.2, then implemented `softmax`, `scaled_dot_product_attention`, and `causal_mask`
+  from scratch in numpy in `exercises/attention_from_scratch.ipynb` — **all three ✅ test cells pass.**
+- **Set up the local env with uv**: installed uv on the Mac, bumped the pinned Python to **3.13**
+  (3.14 blocked — `gensim` has no 3.14 wheels), ran `uv sync`, and registered `.venv` as a Jupyter
+  kernel so notebooks resolve project deps. Wrote a full uv setup guide into the README and reconciled
+  its study-plan section with `roadmap.md`.
 
 ## Notes & insights
 - Data source = `nba_api` (official stats.nba.com wrapper), **free, no API key**; only constraint is
@@ -28,10 +36,20 @@
   rebounds in 6 GP; Wemby was the true leader over 21 GP).
 - Claude Max ≠ general API access (separate billing) → plan to start the LLM step with a free local
   model (Ollama).
+- **Softmax stability:** subtract each row's max before `exp` — softmax is invariant to a per-row
+  constant shift, so this prevents `exp(big)` → `inf`/`nan` with no change to the result. Do it with
+  `np.max(x, axis=-1, keepdims=True)` (vectorized, no in-place row loop — the loop silently fails on
+  1-D inputs). Softmax in attention is **always `axis=-1`** (per-query/per-row), not matrix-wide.
+- **uv/Jupyter:** notebooks run a *kernel*, not the terminal's active venv — register the project
+  `.venv` as a kernel (`uv run python -m ipykernel install --user --name statlas`) and select it.
 
 ## Coding / exercises
 - EDA scripts (pulls + profiling + figures) run in-session; raw data cached to `eda/data/`.
-- Next: roadmap "Part 2" example-coding list — start with micrograd (Stage 1).
+- **Stage 3 exercise done:** `exercises/attention_from_scratch.ipynb` — `softmax` (stable),
+  `scaled_dot_product_attention` (scale by √d, additive mask), `causal_mask` (`np.triu(..., k=1)`);
+  all ✅ tests pass.
+- Next: roadmap Stage 4 (LLMs) → Stage 5 (prompting & function calling); example-coding =
+  sentence → strict JSON with Pydantic validation.
 
 ## Links & resources
 - Master guide: learning/roadmap.md  (full resource index inside)
@@ -41,4 +59,6 @@
 - Text-to-SQL survey (2024): https://arxiv.org/abs/2406.08426
 
 ## Carry-over for next time
-- Foundations-first mode. Next: roadmap Stage 1 (3B1B NN + micrograd) → Stage 2 (CS224N L1–3).
+- Foundations-first mode. **Stage 3 (transformers) complete.** Next: roadmap Stage 4 (LLMs:
+  tokenization, context windows, sampling/temperature) → Stage 5 (prompting, tool calling,
+  structured JSON output). Load-bearing stages remaining: 5, 6 (text-to-SQL), 7 (SQL).

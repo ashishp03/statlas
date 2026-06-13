@@ -15,8 +15,9 @@ Project: AI-powered sports stats answer engine (a better StatMuse).
 
 | Track | Stage | Notes |
 |-------|-------|-------|
-| **Foundations (roadmap.md)** | **Stage 3 — Transformers & attention** (entry point) | MS-DS background → Stage 1 (NN) & Stage 2 (embeddings) are revision; skip/skim. Start: Illustrated Transformer + Attention paper §3 |
-| **Reference built today** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
+| **Foundations (roadmap.md)** | **Stage 3 — Transformers & attention ✅ DONE** → next **Stage 4 (LLMs)** | Stage 3 complete 2026-06-13: 3B1B + Illustrated Transformer + Attention §3 read; `softmax`/`scaled_dot_product_attention`/`causal_mask` implemented from scratch, all ✅ tests pass. Stages 1–2 were revision (skipped) |
+| **Env** | uv on the Mac, Python 3.13 | `uv sync` + `.venv` registered as Jupyter kernel; 3.14 blocked by `gensim` wheels |
+| **Reference built** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
 | **Parked** | Build plan (`curriculum.md`) | revive after foundations |
 
 Repo note: the `p0` scaffold (`parser.py`, template `planner.py`, `executor.py`, answer cards)
@@ -83,3 +84,13 @@ is the **baseline + ship target** for when we return to building.
   SQL→RAG→eval, with example-coding exercises). Parked `curriculum.md`.
   Next focus: roadmap Stage 1 (3B1B + Karpathy micrograd) → Stage 2 (CS224N L1–3).
   *Completed: EDA + roadmap (this session).*
+- **2026-06-13 (day5, Stage 3 worked + env setup)** — Ashish completed roadmap **Stage 3 —
+  Transformers & attention** (the `days/day5/TODAY.md` checklist, all 5 steps): watched 3B1B
+  "Attention visually explained," read the Illustrated Transformer + *Attention Is All You Need*
+  §3.1–3.2, and implemented `softmax` (numerically stable), `scaled_dot_product_attention`
+  (scale by √d + additive mask), and `causal_mask` from scratch in numpy in
+  `exercises/attention_from_scratch.ipynb` — **all three ✅ test cells pass** (verified end-to-end).
+  Also stood up the local env: installed **uv** on the Mac, bumped pinned Python to **3.13**
+  (3.14 blocked by `gensim` wheels), `uv sync`, registered `.venv` as a Jupyter kernel, and wrote
+  the uv setup guide into the README. **Next: Stage 4 (LLMs) → Stage 5 (prompting & tool calling).**
+  *Completed: Stage 3 (watch+read+code, tests green) + uv/3.13 env (this session).*
