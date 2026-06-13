@@ -9,7 +9,7 @@ Ask a question in plain English, get an **exact** answer computed from a real da
 Victor Wembanyama averaged 4.4 plus/minus in the playoffs vs OKC (across 5 games).
 ```
 
-> **Note:** v0 ships with small **sample data** (invented numbers) so it runs instantly with no API keys. Real NBA data plugs in at `data/ingest.py` (Study Plan Phase 4).
+> **Note:** v0 ships with small **sample data** (invented numbers) so it runs instantly with no API keys. Real NBA data plugs in at `data/ingest.py` (roadmap Stage 6, text-to-SQL).
 
 ## The core idea
 
@@ -23,21 +23,77 @@ question
   -> engine.compose   number    -> sentence + answer card
 ```
 
-## Quick start
+## Setup
+
+This project uses [**uv**](https://docs.astral.sh/uv/) to manage Python, dependencies, and the virtual environment. You do **not** need to install Python or create a venv yourself — uv does both from the lockfile.
+
+**1. Install uv** (one time, per machine):
 
 ```bash
-pip install -r requirements.txt
-export PYTHONPATH=src
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# or: brew install uv
 
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**2. Create the environment** from the lockfile:
+
+```bash
+uv sync                 # runtime + dev deps; reads .python-version + uv.lock
+uv sync --extra llm     # add this if you want the optional Anthropic LLM deps
+```
+
+`uv sync` reads `.python-version` (the pinned interpreter, **3.13** — uv downloads it if missing), creates `.venv/`, and installs the exact versions from `uv.lock`. That's the whole setup.
+
+### Daily use — you do not activate the venv
+
+Run everything through `uv run`; it auto-uses `.venv` with no activation:
+
+```bash
 # one-off question
-python -m statlas.cli "How many points did LeBron average in 2013?"
+uv run statlas "How many points did LeBron average in 2013?"
 
 # interactive mode (shows the parsed intent + SQL)
-python -m statlas.cli
+uv run statlas
 
 # run the eval scoreboard
-python tests/run_eval.py
+uv run python tests/run_eval.py
 ```
+
+(If you prefer a classic activated shell: `source .venv/bin/activate` on macOS/Linux, `.venv\Scripts\activate` on Windows. Activation is only for terminals — notebooks ignore it; see below.)
+
+### Managing dependencies
+
+```bash
+uv add geopandas        # add a runtime dependency (updates pyproject.toml + uv.lock)
+uv add --dev pytest     # add a dev-only dependency
+uv remove geopandas     # remove one
+uv lock                 # re-resolve the lockfile
+```
+
+Commit `pyproject.toml`, `uv.lock`, and `.python-version` — together they let anyone reproduce your exact environment with one `uv sync`.
+
+### Jupyter notebooks
+
+Notebooks run a **kernel**, not your terminal's active venv — so activating does nothing for them. Register this project's venv as a kernel once:
+
+```bash
+uv run python -m ipykernel install --user --name statlas --display-name "Python (statlas .venv)"
+```
+
+Then in VS Code / JupyterLab pick the **`statlas` / `.venv/bin/python`** kernel (top-right of the notebook). To verify a notebook is on the right interpreter, run `import sys; print(sys.executable)` — it should end in `.venv/bin/python`. New packages added via `uv add` are picked up automatically; only re-run the `ipykernel install` command if you rebuild `.venv` (e.g. after changing the Python version).
+
+### Changing the Python version
+
+```bash
+uv python pin 3.14      # rewrites .python-version (downloads it if needed)
+uv sync                 # rebuilds .venv on the new version
+# then re-run the `ipykernel install` command above
+```
+
+Keep the pin at or above the `requires-python` floor in `pyproject.toml`. **Caveat:** the pin is currently **3.13**, not the newest release — `gensim` (a compiled dependency) has no wheels for **3.14** yet and fails to build against its C API. 3.13 is the latest version the full dependency set supports; bump to 3.14+ only once `gensim` ships compatible wheels.
 
 ## Layout
 
@@ -53,15 +109,23 @@ tests/
   eval_set.json + run_eval.py         -> your accuracy scoreboard
 ```
 
-## How this maps to the study plan
+## How this maps to the learning roadmap
 
-Each module is a deliberate seam where a learning phase upgrades a stub into the real thing:
+This is currently a **learning project in foundations-first mode** — the ground-up concept
+stack (neural nets → NLP → transformers → LLMs → prompting → text-to-SQL → SQL → RAG → eval)
+lives in [`learning/roadmap.md`](learning/roadmap.md), with `learning/progress.md` as the
+tracker. The product build is paused; the rule-based scaffold above is the baseline.
 
-- **Phase 2 (NLP/NLU):** `entities/resolver.py` — upgrade the nickname dict to an embedding/NER linker.
-- **Phase 3 (LLM app layer):** `nlu/parser.py` — replace rule-based parsing with LLM function-calling that returns the same `Intent`.
-- **Phase 4 (text-to-SQL):** `data/ingest.py` — swap sample data for `nba_api`; let an LLM draft SQL for complex queries, always validated by `planner.assert_safe`.
-- **Phase 5 (RAG):** add a glossary + example-query retriever to improve parsing/SQL.
-- **Phase 6 (eval):** grow `tests/eval_set.json` — it's your scoreboard.
-- **Phase 7 (viz):** turn the `card` dict from `engine.ask()` into a shareable chart.
+When building resumes, each module is a deliberate seam where a roadmap stage upgrades a stub
+into the real thing:
 
-The interface between language and query stays fixed, so you can upgrade one stage at a time without rewriting the rest.
+- **Stage 2 (NLP / embeddings):** `entities/resolver.py` — upgrade the nickname dict to an embedding/NER linker.
+- **Stages 4–5 (LLMs + prompting):** `nlu/parser.py` — replace rule-based parsing with LLM tool-calling that returns the same `Intent`.
+- **Stage 6 (text-to-SQL):** `data/ingest.py` — swap sample data for `nba_api`; let an LLM draft SQL for complex queries, always validated by `planner.assert_safe`.
+- **Stage 7 (SQL / analytical DB):** the DuckDB query layer — window functions, aggregations, min-games qualifiers.
+- **Stage 8 (RAG):** add a glossary + example-query retriever to improve parsing/SQL.
+- **Stage 9 (eval):** grow `tests/eval_set.json` — it's your scoreboard.
+- **Stage 10 (viz):** turn the `card` dict from `engine.ask()` into a shareable chart.
+
+The interface between language and query stays fixed, so you can upgrade one stage at a time
+without rewriting the rest.
