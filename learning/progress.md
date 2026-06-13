@@ -15,7 +15,7 @@ Project: AI-powered sports stats answer engine (a better StatMuse).
 
 | Track | Stage | Notes |
 |-------|-------|-------|
-| **Foundations (roadmap.md)** | Stage 1–2 — NN intuition → NLP foundations | start: 3B1B NN series + Karpathy micrograd; then CS224N L1–3 |
+| **Foundations (roadmap.md)** | **Stage 3 — Transformers & attention** (entry point) | MS-DS background → Stage 1 (NN) & Stage 2 (embeddings) are revision; skip/skim. Start: Illustrated Transformer + Attention paper §3 |
 | **Reference built today** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
 | **Parked** | Build plan (`curriculum.md`) | revive after foundations |
 
