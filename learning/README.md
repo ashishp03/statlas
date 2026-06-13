@@ -6,7 +6,10 @@ stats answer engine (a better StatMuse). It's maintained partly by hand and part
 
 ## How it works
 
-- **`progress.md`** — the master tracker. Top section shows the current phase on each of the
+- **`curriculum.md`** — the advanced, practice/paper/video-based module map (both tracks). Start here.
+- **`modules/NN-name/`** — each module has a `workbook.md` (objectives, papers, theory) and a graded
+  `exercises.ipynb` (homework cells with `assert`s). Every module ships a change into `src/statlas/`.
+- **`progress.md`** — the master tracker. Top section shows the current module on each of the
   two tracks; below it is a dated log of what was suggested and what was actually completed.
 - **`days/dayN/summary.md`** — one folder per active study day. Each day's `summary.md`
   captures: what the coach suggested, what you actually did, notes/insights, links, and any
