@@ -1,0 +1,5 @@
+# Per-branch context overlay: never merge it across branches — each branch keeps its OWN copy.
+# This needs a one-time, per-clone config so git knows what "ours" means:
+#     git config merge.ours.driver true
+# (That line is local config, not committed, so run it once on every machine you clone to.)
+.claude/branch.md merge=ours
