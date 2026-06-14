@@ -1,0 +1,5 @@
+# DEPRECATED — this project now uses uv (see pyproject.toml + uv.lock).
+# Setup:   uv sync
+# Add a dependency:   uv add <package>
+# Run something:      uv run statlas "your question"   |   uv run pytest
+# This file is kept only as a pointer and is no longer the source of truth.
