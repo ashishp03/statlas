@@ -43,7 +43,7 @@
 - `game_logs` schema (`player_id, season, game_date, opponent_abbr, is_playoff, min, pts, reb, ast, plus_minus`) stays stable so the pipeline is unchanged when real data swaps in
 - The learning effort runs in two modes: advanced build plan (`learning/curriculum.md`, PARKED) and foundations-first (`learning/roadmap.md`, ACTIVE)
 - Start the LLM step with a free local model (Ollama); Claude Max ≠ general API access
-- Dependency/env management is **uv**: deps live in `pyproject.toml`, locked in `uv.lock`, Python pinned via `.python-version` (3.12); `uv sync` installs, `uv add` adds, `uv run` executes. Runtime deps = duckdb/rapidfuzz/pandas/nba_api; `dev` group = pytest/matplotlib/ipykernel/jupyterlab; `llm` extra = anthropic. `requirements.txt` is deprecated (pointer only)
+- Dependency/env management is **uv**: deps live in `pyproject.toml`, locked in `uv.lock`, Python pinned via `.python-version` (3.12); `uv sync` installs, `uv add` adds, `uv run` executes. Runtime deps = duckdb/rapidfuzz/pandas/nba_api; `dev` group = pytest/matplotlib/ipykernel/jupyterlab; `llm` extra = anthropic. `requirements.txt` has been removed — `pyproject.toml` + `uv.lock` are the single source of truth
 
 **Non-negotiable constraints:**
 - The LLM never computes or recalls statistics — the database does, always
