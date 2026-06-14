@@ -1,30 +1,23 @@
-# main — Branch Context
+# data-exploration — Branch Context
 
-> Branch overlay for `main` (the trunk). The shared, canonical project context lives in the root
-> `CLAUDE.md`; THIS file adds only what is specific to `main`. Protected by `.gitattributes`
-> (`merge=ours`) so it never merges across branches.
+> Branch overlay for `data-exploration` (created 2026-06-13). The shared, canonical project context lives
+> in the root `CLAUDE.md` (and subdirectory `CLAUDE.md` files) on `main`; THIS file adds only what
+> is specific to this branch. Protected by `.gitattributes` (`merge=ours`) so it never merges
+> across branches.
 
 ## Purpose
-`main` is the **trunk**: the shared source of truth for environment setup and project context. It
-holds the toolchain (`pyproject.toml`, `uv.lock`, `.python-version`), the root `CLAUDE.md` +
-`README.md`, and the branch-model infrastructure (`.gitattributes`, `scripts/`,
-`.claude/branch.template.md`). No feature work happens here.
+Explore NBA data api, find its structure, restrcitions, and understand how to use it.
 
 ## Scope — what belongs on this branch
-- Environment deps + lockfile (`pyproject.toml`, `uv.lock`, `.python-version`, `requirements.txt`)
-- Root context/setup docs (`CLAUDE.md`, `README.md`) and the branch-model infra
-- **Not** product/pipeline code — that lives on its own feature branch and is **not** merged back
-  here (the build is paused; the p0 scaffold lives on the work branches)
-- **Not** learning/study material — that lives on the `learning` branch
-- **Not** nba_api EDA/data exploration — that belongs on a `data-exploration` branch
+- TODO: directories / files this branch owns or focuses on
+- TODO: what should NOT happen here (do it on main or another branch)
 
 ## Branch-specific instructions
-- Treat `main` as docs + setup only. To start real work, branch off main:
-  `scripts/new-branch.sh <name> "purpose"` (scaffolds this overlay from the template + commits).
-- Edit shared files (root `CLAUDE.md`, `README.md`, toolchain) HERE; feature branches pull updates
-  with `git merge main` (their own `.claude/branch.md` is preserved via `merge=ours`).
+- TODO: conventions, gotchas, or commands unique to this branch
+
+## Subdirectory notes (branch-specific)
+- TODO: `<path/>` — note (only if a folder needs branch-specific guidance; otherwise its shared
+  `CLAUDE.md` already covers it)
 
 ## Rolling log (most recent first)
-- 2026-06-13 — Trunk seeded: brought the uv toolchain and the root context/setup docs
-  (`CLAUDE.md`, `README.md`, branch-model infra) over from the `learning` snapshot. Product code
-  and study material intentionally stay on their feature branches.
+- 2026-06-13 — branch created from main.
