@@ -129,3 +129,25 @@ into the real thing:
 
 The interface between language and query stays fixed, so you can upgrade one stage at a time
 without rewriting the rest.
+
+## Branches & context files
+
+This repo uses a **shared-core + per-branch-overlay** model so the context files stay consistent
+across branches without merge pain:
+
+- `main` is the trunk and the source of truth for shared files: the root `CLAUDE.md`, every
+  subdirectory `CLAUDE.md`, this `README.md`, and the toolchain (`pyproject.toml`, `uv.lock`,
+  `.python-version`). Edit these on `main`; flow them outward with `git merge main`.
+- Every feature branch is created **from `main`** — `git switch -c <name> main`, or
+  `scripts/new-branch.sh <name> "purpose"` — so it inherits all shared files automatically (a
+  branch is a full snapshot of its parent; nothing is copied by hand).
+- Branch-specific instructions + a rolling log live in **`.claude/branch.md`**: one file, same
+  path on every branch, different content per branch. The root `CLAUDE.md` `@import`s it, so Claude
+  always loads "shared core + this branch's specifics."
+- `.claude/branch.md` is marked `merge=ours` in `.gitattributes`, so it never merges across
+  branches. One-time per clone: `git config merge.ours.driver true`.
+- Subdirectory `CLAUDE.md` files describe code and stay shared; put branch-specific notes about a
+  folder inside `.claude/branch.md` rather than forking the subdir file.
+
+Branches: `learning` (foundations-first study — see `learning/README.md`), `data-exploration`
+(nba_api EDA), and feature branches off `main`.
