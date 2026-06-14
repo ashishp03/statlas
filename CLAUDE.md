@@ -1,5 +1,10 @@
 # statlas — Project Context
 
+> **Branch overlay:** @.claude/branch.md — branch-specific instructions & rolling log for whatever
+> branch you're checked out on. THIS root file is the shared, canonical context (source of truth on
+> `main`); the `@import` above pulls in the current branch's specifics. See "Branch model &
+> context-file workflow" below for how this is set up and how to start a new branch.
+
 ## Section 1: Evergreen
 
 **What this is:** An AI-powered natural-language sports-stats answer engine — "a better StatMuse." Python. A question flows through a fixed pipeline: `question → NLU (intent) → text-to-SQL → DuckDB execution → generation → answer card`. The core bet: **the LLM handles language only; the database does all arithmetic.** Currently a learning project with a working rule-based p0 scaffold; the LLM-driven pipeline is not built yet.
@@ -49,6 +54,14 @@
 - Free/open stack first (`nba_api`, DuckDB, local models) before any paid API
 - No stat is ever hardcoded; all numbers come from a query against the data
 
+**Branch model & context-file workflow (Option A — shared core + per-branch overlay):**
+- `main` is the trunk. It holds the canonical context: this root `CLAUDE.md`, every subdirectory `CLAUDE.md`, `README.md`, and the toolchain (`pyproject.toml`, `uv.lock`, `.python-version`). These are SHARED — edit them on `main`, then flow changes to feature branches with `git merge main`.
+- Feature branches (`learning`, `data-exploration`, …) are created FROM `main`, so they inherit all of the above automatically — files are never copied between branches; a branch is a full snapshot of its parent commit.
+- Branch-specific instructions + log live in ONE file: `.claude/branch.md`. Same path on every branch, different content per branch. This root file `@import`s it, so Claude always loads "shared core + this branch's specifics."
+- Subdirectory `CLAUDE.md` files are NOT per-branch: they describe the *code* in each folder, which doesn't change between branches. Keep them shared on `main`; if a branch needs a note about a subdirectory, add it as a section inside that branch's `.claude/branch.md` instead of forking the subdir file.
+- Conflict protection: `.gitattributes` marks `.claude/branch.md` as `merge=ours`, so merging `main`↔branch always keeps the *current* branch's copy. One-time per clone: `git config merge.ours.driver true`.
+- To create a new branch: `git switch -c <name> main`, then `cp .claude/branch.template.md .claude/branch.md` and fill it in — or just run `scripts/new-branch.sh <name> "purpose"`, which does both and commits. Pull later shared updates with `git merge main` (your `branch.md` is preserved).
+
 **Session log rules:**
 - Keep only the last 2 session logs below
 - When adding a new log, delete the oldest if there are already 2
@@ -58,10 +71,10 @@
 ## Section 2: Rolling Session Log (last 2 sessions only)
 
 
-### 2026-06-13 — uv env on the Mac + Stage 3 (transformers) completed
-**Built:** Stood up local dev with **uv** on the owner's Mac: ran `uv sync`, then fixed Jupyter notebooks not seeing project deps — the cause was the only registered kernel pointing at Homebrew's Python 3.13, not the project `.venv`; registered `.venv` as a kernel (`uv run python -m ipykernel install --user --name statlas`). **Bumped pinned Python 3.12 → 3.13** (`uv python pin`): tried 3.14 first but `gensim` has no 3.14 wheels and fails to build against its C API, so 3.13 is the ceiling for the current dep set; rebuilt `.venv`, re-registered the kernel, verified all imports + CLI + eval (5/5). Wrote a full **uv setup guide** into the README (install, `uv sync`, `uv run`, kernels, version-bump caveat) and reconciled the README study-plan section with `learning/roadmap.md` stages. Committed + pushed (`6237f9e`) all of the above plus the repo-wide `CLAUDE.md` context files. Then the owner **completed roadmap Stage 3 — transformers & attention**: implemented `softmax` (stable), `scaled_dot_product_attention`, and `causal_mask` from scratch in `learning/days/day5/exercises/attention_from_scratch.ipynb`; verified the notebook executes top-to-bottom with all three ✅ test cells passing. Ticked off `days/day5/TODAY.md`, updated `progress.md` (Stage 3 done → next Stage 4) and `days/day5/summary.md`.
-**Notes:** Notebooks run a *kernel*, not the terminal's active venv — activation doesn't help; pick the `.venv`/`statlas` kernel. The earlier `.git/index.lock` issue did not recur (cleared stale locks pre-emptively). Next learning focus: roadmap Stage 4 (LLMs) → Stage 5 (prompting & tool calling).
-
 ### 2026-06-13 — Repo context files + today's learning checklist
 **Built:** Generated `CLAUDE.md` context files across the repo (root full format; subdirectories scoped to the same format; pure output/data folders skipped). Created the explicit Stage-3 study checklist `learning/days/day5/TODAY.md` and the self-checking exercise notebook `learning/days/day5/exercises/attention_from_scratch.ipynb` (softmax, scaled dot-product attention, causal mask; verified the built-in tests pass with a correct solution). Set the roadmap entry point to Stage 3 (transformers) since Stages 1–2 are revision given the owner's MS in Data Science. **Migrated dependency management to uv:** declared deps in `pyproject.toml` (runtime + `dev` group + `llm` extra), added a `statlas` CLI entry point, pinned Python via `.python-version` (3.12), generated `uv.lock`, and deprecated `requirements.txt`. Verified in a sandbox copy: `uv lock`/`uv sync` succeed, package builds, CLI runs, and the eval suite passes 5/5 (100%).
 **Notes:** No product code changed; config + context files only. uv could not be installed onto the owner's Mac from here (separate sandbox) — owner runs `uv` install + `uv sync` per machine.
+
+### 2026-06-13 — Option-A branch model + context-file workflow
+**Built:** Adopted the shared-core + per-branch-overlay model. Added a `@.claude/branch.md` import and a "Branch model & context-file workflow" section to this root file; created `.claude/branch.md` (learning overlay), `.claude/branch.template.md`, `.gitattributes` (`.claude/branch.md merge=ours`), and `scripts/new-branch.sh` (branch off main + scaffold overlay + commit). Decision: keep ONE comprehensive root `README.md` on `main`; make `learning/README.md` the learning-branch readme (avoids a divergent same-path README). Subdirectory `CLAUDE.md` files stay shared; branch-specific subdir notes go inside `.claude/branch.md`.
+**Notes:** File content written from the assistant sandbox; ALL git steps (clear `.git/*.lock`, deps-only commit/PR of the uv toolchain to `main`, branch creation, `git config merge.ours.driver true`) are run by the owner in Claude Code — git can't execute in the sandbox.
