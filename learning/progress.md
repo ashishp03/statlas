@@ -94,3 +94,8 @@ is the **baseline + ship target** for when we return to building.
   (3.14 blocked by `gensim` wheels), `uv sync`, registered `.venv` as a Jupyter kernel, and wrote
   the uv setup guide into the README. **Next: Stage 4 (LLMs) → Stage 5 (prompting & tool calling).**
   *Completed: Stage 3 (watch+read+code, tests green) + uv/3.13 env (this session).*
+- **2026-06-21 (day6)** — Foundations track: **Stage 3 (transformers) ✅ done**, next **Stage 4 (LLMs)**.
+  No new completion reported since day5 (no rush — flexible timeline). Suggested — T1: Karpathy
+  "Intro to Large Language Models" (~1-hr talk) to open Stage 4 (tokenization, context windows,
+  sampling/temperature). T2: finish T-B by adding `.claude/commands/eval.md` (the root `CLAUDE.md`
+  now exists). Stretch: Hugging Face LLM Course ch.1–2. *Completed: (awaiting Ashish's input.)*
