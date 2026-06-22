@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="900" height="380" fill="#ffffff"/>
+  <defs>
+    <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#888"/>
+    </marker>
+  </defs>
+  <text x="14" y="26" font-size="16" font-weight="700" fill="#111">The join problem: no shared key across sources - resolve once into a crosswalk</text>
+  <text x="14" y="45" font-size="11.5" fill="#666">Each API names players differently. Joining on raw name is fragile (accents, Jr./Sr., duplicate names). Build a maintained bridge.</text>
+
+  <!-- source boxes -->
+  <g font-size="10.5">
+    <rect x="30" y="66" width="250" height="74" rx="6" fill="#eaf2fb" stroke="#2e86c1"/>
+    <text x="44" y="88" font-size="12" font-weight="700" fill="#1a5276">nba_api  (PRIMARY)</text>
+    <text x="44" y="108" fill="#222">key: PLAYER_ID  (int, e.g. 2544)</text>
+    <text x="44" y="124" fill="#555">+ PLAYER_NAME "LeBron James"</text>
+
+    <rect x="325" y="66" width="250" height="74" rx="6" fill="#f5eafb" stroke="#8e44ad"/>
+    <text x="339" y="88" font-size="12" font-weight="700" fill="#6c3483">Basketball-Reference</text>
+    <text x="339" y="108" fill="#222">key: slug  (str, "jamesle01")</text>
+    <text x="339" y="124" fill="#555">+ name "LeBron James"</text>
+
+    <rect x="620" y="66" width="250" height="74" rx="6" fill="#fdf2e6" stroke="#e67e22"/>
+    <text x="634" y="88" font-size="12" font-weight="700" fill="#a04000">balldontlie</text>
+    <text x="634" y="108" fill="#222">key: id  (own int)</text>
+    <text x="634" y="124" fill="#555">+ first_name / last_name</text>
+  </g>
+
+  <!-- arrows down to resolver -->
+  <g stroke="#999" stroke-width="1.5" fill="none">
+    <path d="M155,140 C155,165 300,165 360,180" marker-end="url(#a2)"/>
+    <path d="M450,140 L450,178" marker-end="url(#a2)"/>
+    <path d="M745,140 C745,165 600,165 540,180" marker-end="url(#a2)"/>
+  </g>
+
+  <!-- resolver -->
+  <rect x="210" y="182" width="480" height="58" rx="6" fill="#34495e"/>
+  <text x="450" y="206" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Normalize + entity resolver</text>
+  <text x="450" y="224" font-size="10" fill="#cdd7e0" text-anchor="middle">strip accents/suffixes · curated nicknames + rapidfuzz · REUSE src/statlas/entities/</text>
+
+  <line x1="450" y1="240" x2="450" y2="266" stroke="#999" stroke-width="1.5" marker-end="url(#a2)"/>
+
+  <!-- crosswalk table -->
+  <rect x="150" y="268" width="600" height="74" rx="6" fill="#1f3a5f"/>
+  <text x="450" y="290" font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle">player_crosswalk  (dimension table, built once at ingest)</text>
+  <text x="450" y="310" font-size="10.5" fill="#cfe2f3" text-anchor="middle">canonical_id  &lt;-&gt;  nba_player_id  &lt;-&gt;  bbref_slug  &lt;-&gt;  bdl_id</text>
+  <text x="450" y="328" font-size="9.5" fill="#9fc0e0" text-anchor="middle">disambiguate collisions by (normalized_name + debut_season + team); refuse below match threshold</text>
+
+  <text x="450" y="364" font-size="10.5" fill="#1f3a5f" text-anchor="middle" font-weight="600">every fact table now joins on canonical_id, never on a name string</text>
+</svg>

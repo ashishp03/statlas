@@ -13,6 +13,8 @@ dependencies = [
     "gensim>=4.4.0",
     "polars>=1.41.2",
     "pyarrow>=24.0.0",
+    "basketball-reference-web-scraper>=4.15.4",
+    "balldontlie>=0.1.6",
 ]
 
 # Optional LLM layer — install with: uv sync --extra llm   (or: uv add anthropic)
