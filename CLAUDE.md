@@ -55,10 +55,11 @@
 - No stat is ever hardcoded; all numbers come from a query against the data
 
 **Branch model & context-file workflow (Option A — shared core + per-branch overlay):**
-- `main` is the trunk. It holds the canonical context: this root `CLAUDE.md`, every subdirectory `CLAUDE.md`, `README.md`, and the toolchain (`pyproject.toml`, `uv.lock`, `.python-version`). These are SHARED — edit them on `main`, then flow changes to feature branches with `git merge main`.
-- Feature branches (`learning`, `data-exploration`, …) are created FROM `main`, so they inherit all of the above automatically — files are never copied between branches; a branch is a full snapshot of its parent commit.
-- Branch-specific instructions + log live in ONE file: `.claude/branch.md`. Same path on every branch, different content per branch. This root file `@import`s it, so Claude always loads "shared core + this branch's specifics."
-- Subdirectory `CLAUDE.md` files are NOT per-branch: they describe the *code* in each folder, which doesn't change between branches. Keep them shared on `main`; if a branch needs a note about a subdirectory, add it as a section inside that branch's `.claude/branch.md` instead of forking the subdir file.
+- `main` is the trunk: the SHARED source of truth for **setup + context only**. It holds this root `CLAUDE.md`, `README.md`, and the toolchain (`pyproject.toml`, `uv.lock`, `.python-version`). Edit these on `main`, then flow them to feature branches with `git merge main`.
+- Product code and study/EDA material do **NOT** live on `main` and are **not merged back** into it — they live on their feature branches (`learning`, `data-exploration`, …). `main` stays lightweight: deps + docs + the branch-model infra.
+- Feature branches are created FROM `main`, so they inherit the shared setup + context automatically — files are never copied between branches; a branch is a full snapshot of its parent commit. Each branch then grows its own code/material on top.
+- Branch-specific instructions + log live in ONE file: `.claude/branch.md`. Same path on every branch, different content per branch (including `main`'s own trunk overlay). This root file `@import`s it, so Claude always loads "shared core + this branch's specifics."
+- Subdirectory `CLAUDE.md` files describe the *code* and live on the branch that holds that code (not on `main`); a branch needing a note about one of its folders can also add a section inside its `.claude/branch.md`.
 - Conflict protection: `.gitattributes` marks `.claude/branch.md` as `merge=ours`, so merging `main`↔branch always keeps the *current* branch's copy. One-time per clone: `git config merge.ours.driver true`.
 - To create a new branch: `git switch -c <name> main`, then `cp .claude/branch.template.md .claude/branch.md` and fill it in — or just run `scripts/new-branch.sh <name> "purpose"`, which does both and commits. Pull later shared updates with `git merge main` (your `branch.md` is preserved).
 
