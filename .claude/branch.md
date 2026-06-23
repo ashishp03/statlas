@@ -25,6 +25,11 @@ holds the toolchain (`pyproject.toml`, `uv.lock`, `.python-version`), the root `
   with `git merge main` (their own `.claude/branch.md` is preserved via `merge=ours`).
 
 ## Rolling log (most recent first)
+- 2026-06-22 — Added the shared Claude Code automation setup (commit `5226551`): PreToolUse hooks
+  (`guard-bash.sh` forces uv over bare python/pip/jupyter; `guard-edits.sh` protects `uv.lock`/`*.duckdb`
+  and branch-aware-blocks `src/statlas/**` edits while on `data-exploration`), wired in `.claude/settings.json`;
+  `data-source-scout` subagent; user-only `run-notebook` skill; `context7` MCP (`.mcp.json`). Lives on the
+  trunk so feature branches inherit it via `git merge main` and new branches off `main` get it automatically.
 - 2026-06-13 — Trunk seeded: brought the uv toolchain and the root context/setup docs
   (`CLAUDE.md`, `README.md`, branch-model infra) over from the `learning` snapshot. Product code
   and study material intentionally stay on their feature branches.
