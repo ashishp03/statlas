@@ -25,6 +25,10 @@ not product features. Follow `learning/roadmap.md`; write only toy / example cod
 - `learning/days/` — the newest `dayN/` is the working context; copy `templates/day-template.md` for new days.
 
 ## Rolling log (most recent first)
+- 2026-06-22 — Inherited the shared Claude Code automation setup from `main` via `git merge main`
+  (uv-only Bash hook, branch-aware edit-guard hook, `data-source-scout` subagent, `run-notebook` skill,
+  `context7` MCP). Resolved a `CLAUDE.md` conflict by taking `main`'s canonical "Branch model" wording
+  (this branch carried a stale variant); `.claude/branch.md` preserved via `merge=ours`.
 - 2026-06-13 — Adopted Option A branch model; learning-branch context moved here. Day 5: ran the
   nba_api EDA (now reference material), pivoted to foundations-first, authored `roadmap.md`,
   started Stage 3. Migrated env to uv. Generated the repo-wide `CLAUDE.md` tree.
