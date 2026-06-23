@@ -30,6 +30,12 @@ Explore NBA data api, find its structure, restrcitions, and understand how to us
   `CLAUDE.md` already covers it)
 
 ## Rolling log (most recent first)
+- 2026-06-22 — Inherited the shared Claude Code automation setup from `main` via `git merge main`
+  (PreToolUse hooks: uv-only Bash guard + branch-aware edit guard that blocks `src/statlas/**` here;
+  `data-source-scout` subagent; `run-notebook` skill; `context7` MCP). `branch.md` preserved via `merge=ours`.
+- 2026-06-21 — Re-ran `notebooks/initial_eda.ipynb` and saved it (commit `1f16534`); the only change was a
+  kernelspec refresh (`statlas (3.12.13)` → `statlas (3.13.8.final.0)`). FLAG: `.python-version` pins **3.12**
+  but the active `.venv`/kernel is **3.13** — reconcile (either repin or rebuild the env on 3.12).
 - 2026-06-21 — Built `notebooks/initial_eda_v2.ipynb`: empirically mapped endpoint history boundaries
   (LeagueDash/ShotChart/PBPv3 → 1996-97, tracking → 2013-14, LeagueLeaders → 1951-52), native-vs-derived
   advanced metrics (ratings/USG/TS/PIE native; PER/BPM/VORP/WS not NBA-provided), and alternative sources
