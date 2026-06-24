@@ -99,3 +99,9 @@ is the **baseline + ship target** for when we return to building.
   "Intro to Large Language Models" (~1-hr talk) to open Stage 4 (tokenization, context windows,
   sampling/temperature). T2: finish T-B by adding `.claude/commands/eval.md` (the root `CLAUDE.md`
   now exists). Stretch: Hugging Face LLM Course ch.1–2. *Completed: (awaiting Ashish's input.)*
+- **2026-06-24 (coach run)** — Foundations: **Stage 3 (transformers) ✅**, next **Stage 4 (LLMs)**.
+  No completion reported since day5; day6 targets carry forward unchanged (flexible timeline, no rush).
+  Suggested — T1: Karpathy **"Intro to Large Language Models"** (~1-hr talk) to open Stage 4
+  (tokenization, pretraining vs fine-tuning, context windows, sampling/temperature). T2: close out
+  **T-B** by adding `.claude/commands/eval.md` (slash command running the p0 eval set). Stretch:
+  Hugging Face LLM Course ch. 1–2. *Completed: (awaiting Ashish's input.)*
