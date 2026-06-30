@@ -105,3 +105,10 @@ is the **baseline + ship target** for when we return to building.
   (tokenization, pretraining vs fine-tuning, context windows, sampling/temperature). T2: close out
   **T-B** by adding `.claude/commands/eval.md` (slash command running the p0 eval set). Stretch:
   Hugging Face LLM Course ch. 1–2. *Completed: (awaiting Ashish's input.)*
+- **2026-06-29 (coach run)** — Foundations: **Stage 3 (transformers) ✅**, next **Stage 4 (LLMs)**.
+  Still no completion reported since day5 (flexible timeline — no rush). day6/day7 Stage-4 targets
+  carry forward unchanged. Suggested — T1: Karpathy **"Intro to Large Language Models"** (~1-hr talk)
+  to anchor Stage 4 (tokenization, pretraining vs. fine-tuning, context windows, sampling/temperature);
+  if already watched, jump to **Hugging Face LLM Course ch. 1–2** and actually run a `pipeline()` call.
+  T2: close out **T-B** by adding `.claude/commands/eval.md` (slash command running the p0 eval set).
+  Stretch: 3Blue1Brown "Large Language Models explained briefly." *Completed: (awaiting Ashish's input.)*
