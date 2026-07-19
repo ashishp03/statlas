@@ -112,3 +112,13 @@ is the **baseline + ship target** for when we return to building.
   if already watched, jump to **Hugging Face LLM Course ch. 1–2** and actually run a `pipeline()` call.
   T2: close out **T-B** by adding `.claude/commands/eval.md` (slash command running the p0 eval set).
   Stretch: 3Blue1Brown "Large Language Models explained briefly." *Completed: (awaiting Ashish's input.)*
+- **2026-07-19 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Big practical session 2026-07-18 (on `data-exploration`): built `experiments/v1_nba_storage_retrieval_benchmark/`
+  (8 store formats, 128/128 eval exact; recommendation DuckDB + season-partitioned Parquet), a SELECT-only-guarded
+  **text-to-SQL bake-off** (MOCK 16/16; real Ollama models still pending) and interactive `ask.py`; also started NLU
+  module `03-nlu-intent-parsing` on a `learning-nlu` worktree — great de-facto Stage 4/5 + text-to-SQL groundwork.
+  Suggested — T1: run the **real-model leg of the bake-off** with a local Ollama model (e.g. `qwen2.5-coder:7b`),
+  compare vs MOCK 16/16 (~60–75 min). T2: finally close **T-B** — add `.claude/commands/eval.md` running the p0
+  eval set (~20–30 min). Stretch: continue module 03 — but first rescue it: the `learning-nlu` worktree at
+  `~/Desktop/Projects/statlas-learning` shows **prunable** in `git worktree list`; commit that work before it's lost.
+  *Completed: (awaiting Ashish's input.)*
