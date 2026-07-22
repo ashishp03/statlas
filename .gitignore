@@ -8,3 +8,10 @@ venv/
 .DS_Store
 .pytest_cache/
 *.egg-info/
+
+# Locally-installed agent skills (via `npx skills`) — kept per-branch, not committed.
+# Promote valuable ones to ~/.agents/skills/ to make them global across all branches/projects.
+/.agents/
+/.claude/skills/*
+!/.claude/skills/run-notebook/
+!/.claude/skills/find-skills/
