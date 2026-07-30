@@ -122,3 +122,14 @@ is the **baseline + ship target** for when we return to building.
   eval set (~20–30 min). Stretch: continue module 03 — but first rescue it: the `learning-nlu` worktree at
   `~/Desktop/Projects/statlas-learning` shows **prunable** in `git worktree list`; commit that work before it's lost.
   *Completed: (awaiting Ashish's input.)*
+- **2026-07-30 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  No completion reported since the 2026-07-18 practical session (flexible timeline — no rush); 07-19's
+  targets carry forward unchanged. Also flagging: the `experiments/v1_nba_storage_retrieval_benchmark/`
+  work (and `ask.py`) on `data-exploration` is still **fully untracked in git** (not committed on that
+  branch or pushed anywhere) — worth a commit soon so it isn't lost. Suggested — T1: Karpathy's
+  **"Intro to Large Language Models"** (~1 hr) if Stage 4 hasn't been opened yet; if it has, run the
+  **real-model leg of the text-to-SQL bake-off** with a local Ollama model (e.g. `qwen2.5-coder:7b`)
+  against the MOCK 16/16 baseline (~60–75 min). T2: close out **T-B** — add `.claude/commands/eval.md`
+  running the p0 eval set (~20–30 min). Stretch: rescue module `03-nlu-intent-parsing` — the
+  `learning-nlu` worktree at `~/Desktop/Projects/statlas-learning` still shows **prunable**; commit
+  that work before it's lost. *Completed: (awaiting Ashish's input.)*
