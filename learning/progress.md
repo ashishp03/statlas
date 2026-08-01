@@ -133,3 +133,14 @@ is the **baseline + ship target** for when we return to building.
   running the p0 eval set (~20–30 min). Stretch: rescue module `03-nlu-intent-parsing` — the
   `learning-nlu` worktree at `~/Desktop/Projects/statlas-learning` still shows **prunable**; commit
   that work before it's lost. *Completed: (awaiting Ashish's input.)*
+- **2026-07-31 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still no completion reported since the 2026-07-18 practical session (flexible timeline — no rush); 07-19/07-30's
+  targets carry forward unchanged. Housekeeping flags persist: `experiments/v1_nba_storage_retrieval_benchmark/`
+  + `ask.py` on `data-exploration` remain fully untracked in git, and the `learning-nlu` worktree at
+  `~/Desktop/Projects/statlas-learning` (module 03 — NLU intent parsing, commit `37222fd`) still shows
+  **prunable**, unchanged since first flagged 07-19. Suggested — T1: Karpathy's **"Intro to Large Language
+  Models"** (~1 hr) to open Stage 4 (tokenization, pretraining vs. fine-tuning, context windows,
+  sampling/temperature) — no rush if it's not been the week for it. T2: close out **T-B** — add
+  `.claude/commands/eval.md` running the p0 eval set (~20–30 min; still the only open T-B item). Stretch:
+  rescue module `03-nlu-intent-parsing` — commit or copy the `learning-nlu` worktree content in before it's
+  lost. *Completed: (awaiting Ashish's input.)*
