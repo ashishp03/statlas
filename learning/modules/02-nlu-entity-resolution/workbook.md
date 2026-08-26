@@ -41,6 +41,25 @@ if "the Joker vs OKC" resolves to the wrong player, every downstream number is w
 7. **Ship** — write the winning approach into `resolver.py` behind the *same* `resolve_player`
    signature so the rest of the pipeline is untouched.
 
+## Math problems (added 2026-08-25, work by hand)
+1. **Cosine similarity, from scratch.** For two TF-IDF character-n-gram vectors `a`, `b`, write
+   out `cos(a,b) = (a·b) / (||a|| ||b||)` and compute it by hand for two short toy vectors (e.g.
+   `a=(2,0,1)`, `b=(1,1,1)`). Confirm your hand computation matches `exercises.ipynb` Exercise 4.
+2. **Precision/recall algebra at the `min_score` threshold.** Given a confusion count
+   (TP, FP, FN, TN) from your eval set at one threshold, derive precision `TP/(TP+FP)` and recall
+   `TP/(TP+FN)`; then argue algebraically why *raising* `min_score` can only keep recall the same
+   or lower it, and keep precision the same or raise it (monotonicity, not just intuition).
+2b. **The refusal case.** A "refuse to guess" (`None`) prediction is neither a TP nor an FP for
+   the *matched* class — it's an FN if the true answer was a real player, and a TN if the true
+   answer was genuinely `None`. Redo your confusion matrix from Exercise 3 with refusals
+   classified this way, then recompute precision/recall — does it change your answer to
+   `workbook.md`'s "wrong confident answer or an honest 'I don't know'?" question?
+3. **Bias–variance framing of the baseline vs. embedding trade-off.** The dictionary+fuzzy
+   baseline is high-bias/low-variance (rigid but predictable); an embedding resolver is
+   lower-bias/higher-variance (flexible but can drift on out-of-distribution nicknames). State,
+   in one paragraph, which regime a 500-player entity space with a long nickname tail sits in,
+   and why that argues for keeping the dictionary hit as a fast path even after adding embeddings.
+
 ## Definition of done
 - Non-optional asserts pass; you have a number for baseline vs your resolver on the eval set.
 - You can state the precision/recall trade-off you chose and *why* for a stats engine.

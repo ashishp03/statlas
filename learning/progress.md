@@ -189,3 +189,19 @@ is the **baseline + ship target** for when we return to building.
   call. T2: close out **T-B** — add `.claude/commands/eval.md` running the p0 eval set (~20–30 min; still the
   only open T-B item). Stretch: rescue module `03-nlu-intent-parsing` — commit or copy the `learning-nlu`
   worktree content in before it's lost. *Completed: (awaiting Ashish's input.)*
+- **2026-08-25 (session — text-to-SQL/SQL-engine study push)** — Ashish asked directly for a
+  focused NLU + text-to-SQL + SQL-engine study package: papers, math problems, coding exercises,
+  videos. Built out **M4 — Text-to-SQL** and **M5 — Computation Engine & Reliability** in
+  `learning/modules/` (previously stubs in `curriculum.md`'s table), each with a `workbook.md`
+  (papers: survey arXiv 2410.01066, DIN-SQL 2304.11015, Spider 1809.08887, BIRD 2305.03111,
+  CHASE-SQL 2410.01943 stretch for M4; DuckDB SIGMOD paper, CMU 15-445 "Query Execution 1",
+  execution-guided decoding 1807.03100, self-consistency 2203.11171 for M5; math problems in both)
+  and a graded `exercises.ipynb`, grounded in the repo's real `days/day5/eda` player-stats CSV via
+  DuckDB (not a toy DB). Both notebooks were **execution-verified end-to-end**
+  (`jupyter nbconvert --execute`, all asserts pass) before shipping — M4 ships with 3/8 gold pairs
+  filled in as an intentional TODO, M5 has none left unfilled. Also appended a **math problems**
+  section to the existing M2 (NLU) workbook (cosine similarity by hand, precision/recall
+  monotonicity at the `min_score` threshold including the refusal case, bias-variance framing).
+  This is a **parallel deep-dive**, not a roadmap-order change — Stage 4 (LLMs) remains the
+  foundations-first default next focus per the coach's run earlier today.
+  *Completed: M4 + M5 modules shipped and verified, M2 math addendum (this session).*

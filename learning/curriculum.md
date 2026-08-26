@@ -73,5 +73,7 @@ through-line instead of one lecture:
 
 ---
 
-*Modules built so far: M1, M2. The rest are stubs in this index and get fully fleshed out as
-you reach them — tell the coach when you finish one and the next gets built.*
+*Modules built so far: M1, M2, M4, M5 (M4/M5 built 2026-08-25 out of sequence, on direct
+request, for a focused NLU/text-to-SQL/SQL-engine push). M3, M6, M7, M8 are stubs in this index
+and get fully fleshed out as you reach them — tell the coach when you finish one and the next
+gets built.*
