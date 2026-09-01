@@ -220,3 +220,17 @@ is the **baseline + ship target** for when we return to building.
   — add `.claude/commands/eval.md` running the p0 eval set (~20–30 min; still the only open T-B item).
   Stretch: rescue module `03-nlu-intent-parsing` — commit or copy the `learning-nlu` worktree content in
   before it's lost. *Completed: (awaiting Ashish's input.)*
+- **2026-09-01 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Quiet since the 2026-08-25 module-building session (M4 text-to-SQL + M5 computation engine, both
+  execution-verified) — one week, flexible timeline, no rush. Nothing new reported completed. Housekeeping
+  flags unchanged: `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` on `data-exploration` are
+  still untracked in git (that branch's working tree also now carries untracked `RESEARCH.md`, `ONBOARDING.md`,
+  `AGENTS.md`, new `.claude/agents/*`), and the `learning-nlu` worktree at `~/Desktop/Projects/statlas-learning`
+  (module 03 — NLU intent parsing, commit `37222fd`) still shows **prunable** (safe on the branch, just untidy).
+  Suggested — T1: open **M4's first paper** — the text-to-SQL survey **arXiv 2410.01066**, intro + taxonomy
+  section, with `modules/04-text-to-sql/workbook.md` open beside it (~60–75 min); the module is already built
+  and waiting, and it's the most directly load-bearing thing for Statlas. (Karpathy's "Intro to LLMs" remains
+  the alternative if classic Stage-4 fundamentals feel better today.) T2: close out **T-B** — add
+  `.claude/commands/eval.md` running the p0 eval set (~20–30 min; still the only open T-B item, and
+  `.claude/commands/` doesn't exist yet on any branch). Stretch: fill in the 3 remaining gold query pairs
+  left as a TODO in `modules/04-text-to-sql/exercises.ipynb`. *Completed: (awaiting Ashish's input.)*
