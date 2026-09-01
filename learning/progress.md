@@ -205,3 +205,18 @@ is the **baseline + ship target** for when we return to building.
   This is a **parallel deep-dive**, not a roadmap-order change — Stage 4 (LLMs) remains the
   foundations-first default next focus per the coach's run earlier today.
   *Completed: M4 + M5 modules shipped and verified, M2 math addendum (this session).*
+- **2026-08-31 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Since the last coach note, real forward motion happened on 08-25: **M4 (Text-to-SQL)** and **M5
+  (Computation Engine & Reliability)** modules were built and execution-verified (workbooks + graded
+  notebooks, grounded in the real day5 EDA data) — a parallel deep-dive, not a formal Stage-4 start,
+  but directly useful groundwork for it. Quiet since (6 days — flexible timeline, no rush). Housekeeping
+  flags persist: `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` on `data-exploration` remain
+  untracked in git, and the `learning-nlu` worktree at `~/Desktop/Projects/statlas-learning` (module 03 —
+  NLU intent parsing, commit `37222fd`) still shows **prunable** (safe, just untidy — flagged since 07-19).
+  Suggested — T1: Karpathy's **"Intro to Large Language Models"** (~1 hr) to formally open Stage 4
+  (tokenization, pretraining vs. fine-tuning, context windows, sampling/temperature) — or, since M4's
+  workbook is already built and ready, jump straight into its first paper (arXiv 2410.01066 survey intro)
+  if text-to-SQL is more exciting right now than the classic LLM-fundamentals detour. T2: close out **T-B**
+  — add `.claude/commands/eval.md` running the p0 eval set (~20–30 min; still the only open T-B item).
+  Stretch: rescue module `03-nlu-intent-parsing` — commit or copy the `learning-nlu` worktree content in
+  before it's lost. *Completed: (awaiting Ashish's input.)*
