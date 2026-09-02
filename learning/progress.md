@@ -234,3 +234,19 @@ is the **baseline + ship target** for when we return to building.
   `.claude/commands/eval.md` running the p0 eval set (~20–30 min; still the only open T-B item, and
   `.claude/commands/` doesn't exist yet on any branch). Stretch: fill in the 3 remaining gold query pairs
   left as a TODO in `modules/04-text-to-sql/exercises.ipynb`. *Completed: (awaiting Ashish's input.)*
+- **2026-09-02 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Quiet since the 2026-08-25 module-building session (M4 text-to-SQL + M5 computation engine, both
+  execution-verified) — nothing new reported completed; flexible timeline, no rush. Housekeeping flags
+  unchanged from 09-01: `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` on `data-exploration`
+  are still untracked in git (alongside untracked `RESEARCH.md`, `ONBOARDING.md`, `AGENTS.md`,
+  `.claude/agents/*`), and the `learning-nlu` worktree at `~/Desktop/Projects/statlas-learning`
+  (module 03 — NLU intent parsing, commit `37222fd`) still shows **prunable** (safe on the branch, just
+  untidy). New minor flag: the `learning` branch is held checked-out by several stale/locked worktrees
+  from old sessions (`git worktree list` shows ~15) — `git worktree prune` when convenient.
+  Suggested — T1: continue in **M4 — Text-to-SQL**: the survey **arXiv 2410.01066**, intro + taxonomy,
+  with `modules/04-text-to-sql/workbook.md` open beside it (~60–75 min) — the module is built and waiting,
+  and it's the most load-bearing piece for Statlas. (Karpathy's "Intro to LLMs" stays the alternative if
+  classic Stage-4 fundamentals feel better today.) T2: close out **T-B** — add `.claude/commands/eval.md`
+  running the p0 eval set (~20–30 min; still the only open T-B item, and `.claude/commands/` still doesn't
+  exist on any branch — verified today). Stretch: fill in the 3 remaining gold query pairs left as a TODO
+  in `modules/04-text-to-sql/exercises.ipynb`. *Completed: (awaiting Ashish's input.)*
