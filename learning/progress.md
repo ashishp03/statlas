@@ -250,3 +250,21 @@ is the **baseline + ship target** for when we return to building.
   running the p0 eval set (~20–30 min; still the only open T-B item, and `.claude/commands/` still doesn't
   exist on any branch — verified today). Stretch: fill in the 3 remaining gold query pairs left as a TODO
   in `modules/04-text-to-sql/exercises.ipynb`. *Completed: (awaiting Ashish's input.)*
+- **2026-09-03 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session (M4 text-to-SQL + M5 computation engine, both
+  execution-verified); nothing new reported completed, no new commits on any branch since — flexible timeline,
+  no rush. Changed the framing today: instead of repeating the ~75-min paper read that hasn't landed for four
+  runs, offered a **small hands-on on-ramp** into M4 (write gold NL→SQL pairs), with the survey paper kept as
+  the "if you have a long block" option. Housekeeping flags unchanged: `experiments/v1_nba_storage_retrieval_benchmark/`
+  + `ask.py` and now also `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` are untracked on
+  `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) is safe on its branch but its worktree path
+  `~/Desktop/Projects/statlas-learning` no longer exists on disk. `git worktree prune` was attempted this run
+  and failed on permissions (~15 stale/locked entries remain) — needs to be run by Ashish locally.
+  Suggested — T1: open `modules/04-text-to-sql/exercises.ipynb` and finish **exercise 1** — add the 5 missing
+  gold NL→SQL pairs (assists leader, a team filter, a per-36-style ratio…) against the day5 EDA CSV until the
+  assert goes green (~30 min); if the block is bigger, continue into the SELECT-only guard TODOs 1–4 in the
+  same notebook, or read the survey **arXiv 2410.01066** intro + taxonomy with `workbook.md` open.
+  T2: close out **T-B** — add `.claude/commands/eval.md` running the p0 eval set (~20 min; still the only open
+  T-B item, `.claude/commands/` still doesn't exist on any branch — verified today). Stretch: Karpathy
+  **"Intro to Large Language Models"** (~1 hr) for the classic Stage-4 fundamentals.
+  *Completed: (awaiting Ashish's input.)*
