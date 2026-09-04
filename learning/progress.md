@@ -268,3 +268,20 @@ is the **baseline + ship target** for when we return to building.
   T-B item, `.claude/commands/` still doesn't exist on any branch — verified today). Stretch: Karpathy
   **"Intro to Large Language Models"** (~1 hr) for the classic Stage-4 fundamentals.
   *Completed: (awaiting Ashish's input.)*
+- **2026-09-04 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session (M4 text-to-SQL + M5 computation engine, both
+  execution-verified); no new commits and no working-tree file changes on any branch since — flexible timeline,
+  no rush. Kept 09-03's "small hands-on on-ramp" framing but **flipped the order of effort**: made the 20-min
+  Track-2 win (`.claude/commands/eval.md`) the lead item since it's been the single open T-B item for ~2 months
+  and is the cheapest thing on the board, with a **single** gold NL→SQL pair in
+  `modules/04-text-to-sql/exercises.ipynb` as the Track-1 micro-step (~15–20 min) rather than the full set of 5.
+  Housekeeping flags unchanged: `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` +
+  `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` still untracked on `data-exploration`;
+  `learning-nlu` (module 03, commit `37222fd`) safe on its branch though its worktree path
+  `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked worktrees still need a local
+  `git worktree prune` (permission-blocked from this session again).
+  Suggested — T1: open `modules/04-text-to-sql/exercises.ipynb`, add **one** gold NL→SQL pair (the assists
+  leader) against the day5 EDA CSV and run the cell (~15–20 min); keep going into the other 4 pairs / the
+  SELECT-only guard TODOs if it's flowing. T2: add `.claude/commands/eval.md` running the p0 eval set (~20 min)
+  — closes T-B. Stretch: survey **arXiv 2410.01066** intro + taxonomy with `modules/04-text-to-sql/workbook.md`
+  open, or Karpathy **"Intro to Large Language Models"** (~1 hr). *Completed: (awaiting Ashish's input.)*
