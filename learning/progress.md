@@ -285,3 +285,20 @@ is the **baseline + ship target** for when we return to building.
   SELECT-only guard TODOs if it's flowing. T2: add `.claude/commands/eval.md` running the p0 eval set (~20 min)
   — closes T-B. Stretch: survey **arXiv 2410.01066** intro + taxonomy with `modules/04-text-to-sql/workbook.md`
   open, or Karpathy **"Intro to Large Language Models"** (~1 hr). *Completed: (awaiting Ashish's input.)*
+- **2026-09-05 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session (M4 text-to-SQL + M5 computation engine, both
+  execution-verified); no new commits on any branch and no modified files anywhere in the repo in the last 7 days
+  — flexible timeline, no rush, and a quiet stretch is fine. It's a Saturday, so today's framing offers **two
+  sizes** of the same next step rather than one fixed block: a ~15-min micro-step and a longer weekend option,
+  keeping 09-04's "cheapest thing first" ordering. Housekeeping flags unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/
+  `.claude/agents/*` still untracked on `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on
+  its branch though its worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked
+  worktrees still need a local `git worktree prune` (permission-blocked from this session again).
+  Suggested — T1: open `modules/04-text-to-sql/exercises.ipynb` and add **one** gold NL→SQL pair (the assists
+  leader) against the day5 EDA CSV, run the cell (~15 min); if the Saturday block is bigger, continue through the
+  other 4 pairs and the SELECT-only guard TODOs 1–4 in the same notebook (~60–75 min). T2: add
+  `.claude/commands/eval.md` running the p0 eval set (~20 min) — still the only open T-B item, and
+  `.claude/commands/` still doesn't exist on any branch (verified today). Stretch: 3Blue1Brown **"Large Language
+  Models explained briefly"** (~7 min) as a zero-friction toe-dip into Stage 4, with Karpathy's full "Intro to
+  LLMs" (~1 hr) as the bigger version. *Completed: (awaiting Ashish's input.)*
