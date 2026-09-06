@@ -302,3 +302,21 @@ is the **baseline + ship target** for when we return to building.
   `.claude/commands/` still doesn't exist on any branch (verified today). Stretch: 3Blue1Brown **"Large Language
   Models explained briefly"** (~7 min) as a zero-friction toe-dip into Stage 4, with Karpathy's full "Intro to
   LLMs" (~1 hr) as the bigger version. *Completed: (awaiting Ashish's input.)*
+- **2026-09-06 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session (M4 text-to-SQL + M5 computation engine, both
+  execution-verified); verified again today — no new commits on any branch, and no file in the repo modified in
+  the last 7 days. Flexible timeline, no rush. **Changed the approach this run:** the same two items
+  (one gold NL→SQL pair + `.claude/commands/eval.md`) have led four runs in a row without landing, so today's
+  lead item is a **zero-prep re-entry point instead of a task** — open the repo and run the already-working
+  `experiments/v1_nba_storage_retrieval_benchmark/ask.py` on `data-exploration` and ask it a few NBA questions,
+  watching the SQL it prints. Rationale: it re-establishes contact with the project in ~10 min with nothing to
+  build, and the printed SQL is exactly the M4 gold-pair material, so it feeds the stalled next step naturally.
+  Housekeeping flags unchanged: `experiments/…` + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/
+  `.claude/agents/*` still untracked on `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on
+  its branch though its worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked
+  worktrees still need a local `git worktree prune`.
+  Suggested — T1: run `ask.py`, ask 3–4 questions, paste the best generated SQL into
+  `modules/04-text-to-sql/exercises.ipynb` as a gold NL→SQL pair (~15 min). T2: add `.claude/commands/eval.md`
+  running the p0 eval set (~20 min) — still the only open T-B item, `.claude/commands/` still doesn't exist on
+  any branch (verified today). Stretch: 3Blue1Brown **"Large Language Models explained briefly"** (~7 min).
+  *Completed: (awaiting Ashish's input.)*
