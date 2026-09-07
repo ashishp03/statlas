@@ -320,3 +320,22 @@ is the **baseline + ship target** for when we return to building.
   running the p0 eval set (~20 min) — still the only open T-B item, `.claude/commands/` still doesn't exist on
   any branch (verified today). Stretch: 3Blue1Brown **"Large Language Models explained briefly"** (~7 min).
   *Completed: (awaiting Ashish's input.)*
+- **2026-09-06 (session — NLU + text-to-SQL study plan)** — Ashish asked directly for a consolidated
+  **reading/watching** plan for NLU and text-to-SQL (coding deliberately deferred — the graded
+  notebooks already exist). Built `learning/study-plan-nlu-text-to-sql.md`: one linear consume-list
+  merging the M2 / M4 / M5 workbook "Read" sections with roadmap Stages 2, 5, 6 and 7, so the whole
+  NLU→SQL half of the project is a single ordered list instead of four scattered ones. Structure:
+  **Part A (NLU)** — vector semantics (skippable revision) → BERT §3 → Sentence-BERT → neural
+  entity-linking survey + rapidfuzz docs → Anthropic tool-use/structured-output docs + Toolformer;
+  **Part B (Text-to-SQL ⭐)** — survey 2410.01066 (intro + prompting only) → DIN-SQL 2304.11015 →
+  Spider → BIRD → execution-guided decoding 1807.03100 → self-consistency 2203.11171 → CHASE-SQL
+  (skim) → DuckDB SIGMOD paper + CMU 15-445 "Query Execution 1" + DuckDB window-function docs.
+  Every item carries a **size tag (S/M/L)** so a session can be matched to the time actually
+  available, and a **one-line takeaway** that serves as its definition-of-done. Recommended order
+  puts **Part B before Part A** (B builds the thing that doesn't exist; A upgrades accuracy on
+  something that already works), with a ~5-hour load-bearing core (items 1–7) inside a ~14–18-hour
+  full list. Also resolved a **citation conflict**: `roadmap.md` cites survey arXiv 2406.08426 while
+  the M4 workbook cites 2410.01066 — noted in the plan as "either works, pick one, don't re-read the
+  other." Reconfirmed the **module 03 (`03-nlu-intent-parsing`) gap**: only M2 exists on the
+  `learning-nlu` branch; the intent-parsing module was never committed and would need rebuilding.
+  *Completed: study plan shipped (this session). No coding exercises added — by request.*
