@@ -357,3 +357,23 @@ is the **baseline + ship target** for when we return to building.
   T2: add `.claude/commands/eval.md` running the p0 eval set (~20 min) — still the only open T-B item,
   `.claude/commands/` still doesn't exist on any branch (verified today). Stretch: **B2 — DIN-SQL**
   (arXiv 2304.11015), the highest-value paper in the plan (~45 min). *Completed: (awaiting Ashish's input.)*
+- **2026-09-11 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session; verified again today — no commits on any branch
+  since 09-10's coach commit, and nothing in the repo modified in the last 6 days. Flexible timeline, no rush.
+  **Adjustment this run:** kept yesterday's B5c (DuckDB window functions) as the topic — it is genuinely the
+  smallest, most load-bearing item on the board — but converted it from *reading* into a **single runnable
+  query**. Rationale: a docs-page read has no artifact and nothing to stop on, whereas one `QUALIFY` query
+  against the existing `days/day5/eda/data/player_stats_2025-26_regular.csv` produces a real answer (top-5
+  scorers with a min-games qualifier), teaches the same three constructs by use, and *is* the repo's
+  reliability rule ("leaderboards need a minimum-games qualifier") written in SQL. ~10 minutes, zero setup —
+  DuckDB is already a dependency and can read the CSV directly. Housekeeping flags unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/
+  `.claude/agents/*` still untracked on `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe
+  on its branch though its worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15
+  stale/locked worktrees still need a local `git worktree prune` (permission-blocked from this session again).
+  Suggested — T1: one DuckDB `QUALIFY` query over the day5 EDA CSV — top 5 PPG with `GP >= 40`, using
+  `RANK() OVER (ORDER BY PTS DESC)` + `QUALIFY` (~10 min); if it flows, paste it into
+  `modules/04-text-to-sql/exercises.ipynb` as a gold NL→SQL pair. T2: add `.claude/commands/eval.md` running
+  the p0 eval set (~20 min) — still the only open T-B item, `.claude/commands/` still doesn't exist on any
+  branch (verified today). Stretch: **B2 — DIN-SQL** (arXiv 2304.11015), the highest-value paper in the
+  study plan (~45 min). *Completed: (awaiting Ashish's input.)*
