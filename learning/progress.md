@@ -339,3 +339,21 @@ is the **baseline + ship target** for when we return to building.
   other." Reconfirmed the **module 03 (`03-nlu-intent-parsing`) gap**: only M2 exists on the
   `learning-nlu` branch; the intent-parsing module was never committed and would need rebuilding.
   *Completed: study plan shipped (this session). No coding exercises added — by request.*
+- **2026-09-10 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session; verified again today — no commits on any branch
+  since, and nothing in the repo modified in the last 5 days. Flexible timeline, no rush. **New angle this run:**
+  the 09-06 session produced `learning/study-plan-nlu-text-to-sql.md` — a reading-only consume list, built at
+  Ashish's explicit request — and that request is a signal: the coding on-ramps (gold NL→SQL pair, `ask.py`)
+  have led five runs without landing, so today's lead item is a **reading item from his own plan**, and the
+  smallest one in it: **B5c — DuckDB window-function docs** (~20 min, tagged in the plan as "most immediately
+  useful item in Part B"). It's zero-setup, it's a docs page not a paper, and `QUALIFY` is literally how the
+  repo's min-games-qualifier rule gets written. Housekeeping flags unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/
+  `.claude/agents/*` still untracked on `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on
+  its branch though its worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked
+  worktrees still need a local `git worktree prune` (permission-blocked from this session again).
+  Suggested — T1: read **B5c**, DuckDB window functions (https://duckdb.org/docs/sql/window_functions) —
+  `RANK() OVER`, `AVG() OVER (PARTITION BY ...)`, `QUALIFY`, and the logical clause order (~20 min).
+  T2: add `.claude/commands/eval.md` running the p0 eval set (~20 min) — still the only open T-B item,
+  `.claude/commands/` still doesn't exist on any branch (verified today). Stretch: **B2 — DIN-SQL**
+  (arXiv 2304.11015), the highest-value paper in the plan (~45 min). *Completed: (awaiting Ashish's input.)*
