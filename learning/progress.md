@@ -18,6 +18,7 @@ Project: AI-powered sports stats answer engine (a better StatMuse).
 | **Foundations (roadmap.md)** | **Stage 3 — Transformers & attention ✅ DONE** → next **Stage 4 (LLMs)** | Stage 3 complete 2026-06-13: 3B1B + Illustrated Transformer + Attention §3 read; `softmax`/`scaled_dot_product_attention`/`causal_mask` implemented from scratch, all ✅ tests pass. Stages 1–2 were revision (skipped) |
 | **Env** | uv on the Mac, Python 3.13 | `uv sync` + `.venv` registered as Jupyter kernel; 3.14 blocked by `gensim` wheels |
 | **Reference built** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
+| **Latest artifacts** | Worked example (2026-09-13) + drafted slash command (2026-09-15) | `days/day7/qualifier_worked_example.md` — DuckDB `RANK() OVER` + `QUALIFY`; qualifier is a no-op on per-game counting stats, decisive on rate stats. `days/day8/draft-eval-command.md` — the T-B `/eval` slash command, written out; needs only a copy into `.claude/commands/` |
 | **Parked** | Build plan (`curriculum.md`) | revive after foundations |
 
 Repo note: the `p0` scaffold (`parser.py`, template `planner.py`, `executor.py`, answer cards)
@@ -377,3 +378,51 @@ is the **baseline + ship target** for when we return to building.
   the p0 eval set (~20 min) — still the only open T-B item, `.claude/commands/` still doesn't exist on any
   branch (verified today). Stretch: **B2 — DIN-SQL** (arXiv 2304.11015), the highest-value paper in the
   study plan (~45 min). *Completed: (awaiting Ashish's input.)*
+- **2026-09-13 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool calling)**.
+  Still quiet since the 2026-08-25 module-building session — verified again today: no commits on any branch
+  since 09-11's coach commit, and nothing in the repo modified in the last 8 days. (No 09-12 run landed.)
+  Flexible timeline, no rush. **Changed the approach again this run — and this time did the work instead of
+  assigning it.** Rationale: the 09-11 run had already shrunk B5c to "one runnable QUALIFY query, ~10 min"
+  and it still didn't land, which suggests the blocker isn't task size but *starting* — opening a terminal,
+  finding the CSV, remembering the column names. So today's Track-1 item is a **read, not a build**: the coach
+  ran the query and shipped `days/day7/qualifier_worked_example.md`, a ~5-minute annotated result.
+  Substantive finding worth keeping: the min-games qualifier is a **no-op on per-game counting stats** in the
+  day5 dataset (top-5 PPG is identical with and without `GP >= 40` — Dončić 33.5 / SGA 31.1 / Edwards 28.8 /
+  Brown 28.7 / Maxey 28.3), but **decisive on rate stats** — unqualified 3P% leaders are four bigs tied at
+  100% on ~1 attempt all season, vs. Kennard .478 / Portis .456 / Spencer .449 once `GP >= 40 AND FG3A >= 3.0`
+  is applied. Implication recorded for the build: qualifier thresholds are **per-metric metadata owned by the
+  planner**, not a global constant and never LLM-generated (allow-list candidate). Housekeeping flags unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/
+  `.claude/agents/*` still untracked on `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe
+  on its branch though its worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15
+  stale/locked worktrees still need a local `git worktree prune` (permission-blocked from this session again).
+  Suggested — T1: read `days/day7/qualifier_worked_example.md` (~5 min), optionally paste its query into
+  `modules/04-text-to-sql/exercises.ipynb` as a gold NL→SQL pair. T2: add `.claude/commands/eval.md` running
+  the p0 eval set (~20 min) — still the only open T-B item, `.claude/commands/` still doesn't exist on any
+  branch (verified today). Stretch: **B2 — DIN-SQL** (arXiv 2304.11015), ~45 min.
+  *Completed: worked example written + executed by the coach (this session). Awaiting Ashish's input on the rest.*
+- **2026-09-15 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting & tool
+  calling)**. Verified today: still no commits on any branch since 09-11's coach commit, and nothing in the repo
+  modified in the last 8 days apart from the coach's own day7 files. (No 09-12 or 09-14 run landed; the 09-13
+  entry above is being committed today, late, because that run hit the git-lock permission issue — `git worktree
+  prune` is still needed locally.) Flexible timeline, no rush. **Two deliberate changes this run.** (1) Track 1
+  **finally opens Stage 4 instead of circling M4/text-to-SQL.** Every run since 09-05 has assigned some flavour
+  of the same text-to-SQL on-ramp (gold pair -> `ask.py` -> B5c reading -> B5c as one query -> B5c pre-run for
+  him to read) and none landed; the roadmap's actual next stage — LLMs — has been "next" since June and has
+  never been opened. So today's item is the 3Blue1Brown **"Large Language Models explained briefly"** (~7 min):
+  passive, phone-watchable, a different modality from eight consecutive terminal/reading tasks, and it moves the
+  stage marker rather than adding depth to a stage already marked next. (2) Track 2: rather than assign
+  `.claude/commands/eval.md` a **ninth** time, the coach **wrote it** — `days/day8/draft-eval-command.md` holds
+  the complete file (frontmatter, `allowed-tools` scoped to `python tests/run_eval.py`, failure-triage steps
+  mapping each `[FAIL]` to parser/planner/executor/data, an explicit "never edit `eval_set.json` to make a case
+  pass" rule, and `$ARGUMENTS`). The remaining work is a `mkdir` + paste, ~2 min, and it checks off **T-B** and
+  opens **T-C (Skills)**. Also committed day7's files to the `learning` branch this run — they had been sitting
+  untracked in the `data-exploration` working tree. Housekeeping flags otherwise unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/
+  `.claude/agents/*` still untracked on `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on
+  its branch though its worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked
+  worktrees still need a local `git worktree prune`.
+  Suggested — T1: 3B1B **"Large Language Models explained briefly"** (~7 min) — Stage 4, first contact.
+  T2: copy `days/day8/draft-eval-command.md` -> `.claude/commands/eval.md`, run `/eval` (~5 min).
+  Stretch: **B2 — DIN-SQL** (arXiv 2304.11015), ~45 min.
+  *Completed: `/eval` slash command drafted in full by the coach (this session). Awaiting Ashish's input on the rest.*
