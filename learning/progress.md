@@ -18,7 +18,7 @@ Project: AI-powered sports stats answer engine (a better StatMuse).
 | **Foundations (roadmap.md)** | **Stage 3 — Transformers & attention ✅ DONE** → next **Stage 4 (LLMs)** | Stage 3 complete 2026-06-13: 3B1B + Illustrated Transformer + Attention §3 read; `softmax`/`scaled_dot_product_attention`/`causal_mask` implemented from scratch, all ✅ tests pass. Stages 1–2 were revision (skipped) |
 | **Env** | uv on the Mac, Python 3.13 | `uv sync` + `.venv` registered as Jupyter kernel; 3.14 blocked by `gensim` wheels |
 | **Reference built** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
-| **Latest artifacts** | Worked example (2026-09-13) + drafted slash command (2026-09-15) | `days/day7/qualifier_worked_example.md` — DuckDB `RANK() OVER` + `QUALIFY`; qualifier is a no-op on per-game counting stats, decisive on rate stats. `days/day8/draft-eval-command.md` — the T-B `/eval` slash command, written out; needs only a copy into `.claude/commands/` |
+| **Latest artifacts** | Worked example (2026-09-13) + drafted slash command (2026-09-15) + `/eval` branch-blocker diagnosis (2026-09-16) | `days/day7/qualifier_worked_example.md` — DuckDB `RANK() OVER` + `QUALIFY`; qualifier is a no-op on per-game counting stats, decisive on rate stats. `days/day8/draft-eval-command.md` — the T-B `/eval` slash command, written out; needs only a copy into `.claude/commands/` — but **paste it on `learning`**: `tests/` does not exist on `data-exploration` (found 09-16, see `days/day9/summary.md`) |
 | **Parked** | Build plan (`curriculum.md`) | revive after foundations |
 
 Repo note: the `p0` scaffold (`parser.py`, template `planner.py`, `executor.py`, answer cards)
@@ -426,3 +426,28 @@ is the **baseline + ship target** for when we return to building.
   T2: copy `days/day8/draft-eval-command.md` -> `.claude/commands/eval.md`, run `/eval` (~5 min).
   Stretch: **B2 — DIN-SQL** (arXiv 2304.11015), ~45 min.
   *Completed: `/eval` slash command drafted in full by the coach (this session). Awaiting Ashish's input on the rest.*
+- **2026-09-16 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting &
+  tool calling)**. Verified today: no commits on any branch since 09-15's coach commit (`c3b5a2e`), and
+  the only files touched in the repo in the last 4 days are the coach's own day7/day8 files. Nothing new
+  reported completed. Flexible timeline, no rush. **The substantive result of this run is a diagnosis
+  rather than a new assignment:** the `/eval` slash command has been assigned ~9 times and drafted in
+  full, and the reason the "2-minute paste" keeps not landing may simply be that **it cannot work on the
+  branch the working tree is checked out on**. `tests/run_eval.py` and `tests/eval_set.json` exist only
+  on `learning`; `data-exploration` (currently checked out) has `src/`, `experiments/`, `notebooks/`,
+  `scripts/` and **no `tests/` at all**. So pasting the command there and typing `/eval` errors out on a
+  missing file. Recorded in `days/day9/summary.md` with the two one-line fixes (`git switch learning`, or
+  `git checkout refs/heads/learning -- tests/`). The coach also attempted to pre-run the harness to
+  confirm it goes green, but the sandbox lacks `duckdb`/`rapidfuzz` and the install timed out — the first
+  real run stays with Ashish. Track 1 is **deliberately unchanged** from 09-15 (3B1B "Large Language
+  Models explained briefly", ~7 min): it was offered only once, it is the smallest move available on the
+  roadmap's actual next stage, and churning the topic every run has not helped. Housekeeping flags
+  unchanged: `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` +
+  `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` still untracked on `data-exploration`;
+  `learning-nlu` (module 03, commit `37222fd`) safe on its branch though its worktree path
+  `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked worktrees plus ~20 broken
+  refs (now warning on every `git branch`) still need a local `git worktree prune`.
+  Suggested — T1: 3B1B **"Large Language Models explained briefly"** (~7 min) — Stage 4, first contact.
+  T2: install `/eval` **on `learning`** (or `git checkout refs/heads/learning -- tests/` first), then run
+  it and report the accuracy line — or the error, which is equally useful (~5 min). Stretch: **B2 —
+  DIN-SQL** (arXiv 2304.11015), ~45 min.
+  *Completed: branch-mismatch blocker on the `/eval` item diagnosed (this session). Awaiting Ashish's input on the rest.*
