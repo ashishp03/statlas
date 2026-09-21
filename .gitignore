@@ -9,12 +9,10 @@ venv/
 .pytest_cache/
 *.egg-info/
 
-# Locally-installed agent skills (via `npx skills`) live in /.agents/skills/ and are normally
-# symlinked from .claude/skills/*, so this stays gitignored by default — a symlink into an ignored
-# target is a broken/missing skill for anyone else who clones the repo. Skills worth keeping
-# materialize their real content into .claude/skills/<name>/ (no longer a symlink) and get an
-# exception below, so they actually commit instead of silently being empty for other checkouts.
-/.agents/
+# Locally-installed agent skills (via `npx skills`) live in /.agents/skills/ — this is now the
+# tracked source of truth, so any tool's skills/ dir (.claude/skills/, .codex/skills/, ...) can
+# symlink to it without duplicating content. .claude/skills/* already holds materialized (real,
+# non-symlink) copies of the skills worth keeping — tracked directly, exceptions below.
 /.claude/skills/*
 !/.claude/skills/run-notebook/
 !/.claude/skills/find-skills/
