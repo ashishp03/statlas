@@ -19,7 +19,8 @@ Project: AI-powered sports stats answer engine (a better StatMuse).
 | **Env** | uv on the Mac, Python 3.13 | `uv sync` + `.venv` registered as Jupyter kernel; 3.14 blocked by `gensim` wheels |
 | **Reference built** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
 | **Latest artifacts** | Worked example (2026-09-13) + drafted slash command (2026-09-15) + `/eval` branch-blocker diagnosis (2026-09-16) + **harness verified green 5/5 (2026-09-20)** | `days/day7/qualifier_worked_example.md` — DuckDB `RANK() OVER` + `QUALIFY`; qualifier is a no-op on per-game counting stats, decisive on rate stats. `days/day8/draft-eval-command.md` — the T-B `/eval` slash command, written out; needs only a copy into `.claude/commands/` — but **paste it on `learning`**: `tests/` does not exist on `data-exploration` (found 09-16, see `days/day9/summary.md`). `tests/run_eval.py` was run by the coach 09-20 and is **green, 5/5, self-bootstrapping the DuckDB seed** — nothing is broken behind the `/eval` item; `days/day10/install-eval.sh` now does the install in one command |
-| **Parked** | Build plan (`curriculum.md`) | revive after foundations |
+| **MODE CHANGE 2026-09-20** | **BUILD SPRINT — 3-week MVP** | Foundations paused. `learning/MVP-3-WEEK-PLAN.md` is now the active guide: 15 weekday sessions (~1h) to a demoable web app by 2026-10-09. Local Ollama first, Claude API later. Second contributor (Nick, SWE/security/AI-infra) joins — `learning/NICK-BRIEF.md`. All work moves to a single `mvp` branch cut from `data-exploration` |
+| **Parked** | Build plan (`curriculum.md`) + foundations roadmap (`roadmap.md`) | revive after the MVP ships |
 
 Repo note: the `p0` scaffold (`parser.py`, template `planner.py`, `executor.py`, answer cards)
 is the **baseline + ship target** for when we return to building.
@@ -483,3 +484,32 @@ is the **baseline + ship target** for when we return to building.
   **B2 — DIN-SQL** (arXiv 2304.11015), ~45 min.
   *Completed: eval harness run and verified green 5/5 by the coach + one-command installer shipped
   (this session). Awaiting Ashish's input on the rest.*
+- **2026-09-20 (session — RESTART: 3-week MVP build sprint)** — Ashish came back after a quiet
+  stretch and asked for a real game plan: NLU / text-to-SQL resources plus a build plan to get a
+  minimal version running in **3 weeks**. Answers to the scoping questions: **local Ollama first**
+  (API once the shape is understood), **a web UI he can show people** as the definition of "minimal",
+  and **~1h on weekdays** (~15 hours total). He also has a collaborator joining — **Nick**, a SWE
+  with security / AI-engineering / workflow depth (author of FerroCache, a distributed semantic cache
+  in Rust: HNSW, WAL, gossip clustering, mTLS, ~222 tests). Explicitly **not** integrating that
+  project; it was context on his level only.
+  **The important discovery this session:** `experiments/.../pipeline/s4_text_to_sql.py` already
+  contains `build_prompt` (schema-grounded, with the season convention and min-games qualifier baked
+  in), `extract_sql`, `ollama_generate`, `execute_on_warehouse` and `judge` — a complete text-to-SQL
+  harness, MOCK-verified 16/16, that has **never been run against a real model**. So week 1 is not
+  "build text-to-SQL," it's "install Ollama and find out where we actually stand" — which is what
+  makes 15 hours a plausible budget at all.
+  **Shipped three documents:** `MVP-3-WEEK-PLAN.md` (15 sessions with definitions of done, the
+  `AnswerCard` contract that lets two people work in parallel, a tiered resource list — 6 load-bearing
+  items at ~2.5h total vs. a Tier-1 shelf explicitly deferred — and an honest risk table);
+  `NICK-BRIEF.md` (standalone, sendable; 6 work packages with a file-level ownership map, led by
+  adversarial hardening of the SELECT-only guard, where the threat model is an *LLM* emitting
+  plausible SQL and DuckDB's `ATTACH`/`COPY`/`read_csv_auto` filesystem surface is the interesting
+  part); `claude-code-setup.md` (exact cleanup for the 24 broken 0-byte refs + 4 junk branches +
+  ~30 stale worktrees, VS Code extension-vs-CLI distinction, `/terminal-setup`, permissions, and two
+  kickoff prompts).
+  **Structural decisions:** collapse to one `mvp` branch cut from `data-exploration` (the branch
+  split has cost more time than any technical problem here); single LLM-only path for the MVP with
+  the rule-based `parser.py`/`planner.py` deliberately left out of scope; no separate exercises —
+  each session's definition of done *is* the exercise, since four graded notebooks already exist
+  unopened and adding homework at 1h/day is how the last three months went.
+  *Completed: plan + brief + setup doc shipped (this session).*
