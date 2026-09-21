@@ -13,6 +13,14 @@ than guessing. Every answer carries the SQL and the rows it came from.
 is whatever you have — the work below is deliberately packaged async so nothing blocks on you and
 you're never blocked on him.
 
+**On "minimal":** this compromises on the UI, on NBA-only, and on anything genuinely extraneous
+(RAG, an MCP server, agent routing — all explicitly post-MVP). It does **not** compromise on the
+architecture. The full 5-stage pipeline from the project's `CLAUDE.md` —
+`question → NLU (intent) → text-to-SQL → DuckDB execution → generation → answer card` — ships as
+designed, including the structured `Intent` contract and the rule-based/LLM two-path gate described
+below. If something in this brief looks like a shortcut, flag it — the intent is a real system, just
+a narrow one.
+
 ---
 
 ## What already exists

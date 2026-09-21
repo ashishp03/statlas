@@ -3,10 +3,33 @@
 **Written:** 2026-09-20 · **Target:** a demoable web app by 2026-10-09
 **Budget:** Ashish ~1h × weekdays = **~15 hours**. Nick: async work packages, sized separately.
 
-**Scope, explicitly:** NBA only. A basic web UI. Only the data already in the warehouse (§0
-below) — no new sources, no new sports, no scraping added mid-sprint. Two answer paths — the
-existing rule-based gate plus an LLM fallback (§1) — not one; that routing decision stays in
-scope, only *widening what the rule-based side covers* is out of scope.
+**Scope, explicitly (2026-09-20 correction):** "Minimal" means we compromise on the UI, on NBA-only,
+and on anything extraneous — it does **not** mean compromise on the core architecture. Everything
+`CLAUDE.md` specifies as the intended shape of Statlas is in scope and should execute. What's cut is
+narrower than the previous draft of this plan implied.
+
+**What stays exactly as intended — not simplified, not stubbed:**
+- The full 5-stage pipeline from `CLAUDE.md`'s own description: `question → NLU (intent) →
+  text-to-SQL → DuckDB execution → generation → answer card`. §1 below now includes the
+  **generation** stage explicitly — it was missing from the first draft of this plan.
+- The structured `Intent` contract between NLU and the query layer, and the rule-based gate that
+  implements it — not a simplification for the MVP, the actual intended architecture.
+- The LLM-drafted-SQL path for what the template can't express — this is `CLAUDE.md`'s own
+  Phase-4 plan ("an LLM may draft SQL for complex queries, but it must pass allow-list validation
+  before execution"), not a shortcut invented for the MVP.
+- Every non-negotiable: the LLM never computes or recalls a stat: DuckDB does; nothing executes
+  unvalidated; unresolved entities/metrics refuse rather than guess (already true today —
+  `resolve_player()` refuses below `min_score=75`, verified in the code, not aspirational); every
+  answer is auditable (SQL + rows exposed); free/open stack first (Ollama before the Claude API).
+
+**What's compromised (the actual cuts):**
+- **UI** — functional, not polished. See Week 3.
+- **NBA only** — no other sport, matching the data actually in the warehouse.
+- **Data** — only what's already ingested (§0 below); no new sources mid-sprint.
+- **Roadmap Stages 5–7 (RAG, growing the eval past ~30, auto-visualization) and Track 2 tooling
+  phases D–G (typed `run_sql` tool, MCP server, routing agent, Cowork automation)** — deferred, not
+  dropped. The roadmap itself already sequences these *after* Stage 4 (LLMs) / text-to-SQL, so
+  treating them as post-MVP is consistent with the plan you already had, not a new cut.
 
 ---
 
@@ -64,17 +87,26 @@ the LLM path.** This is exactly what `CLAUDE.md`'s own phase-4 note describes, a
 keep — the parser, planner, and entity resolver already exist (~185 lines total) and the resolver's
 schema already matches the real warehouse (`game_logs`, `players`), not just the old 5-player seed.
 
+This is the full pipeline `CLAUDE.md` names — `question → NLU (intent) → text-to-SQL → DuckDB
+execution → generation → answer card` — with NLU and text-to-SQL implemented as the two-path gate,
+and **generation** (missing from the first draft of this plan) added back as its own explicit stage:
+a formatter that turns a raw DuckDB result into a sentence. It is **template-based, not an LLM
+call** — "who's the leader" questions return `{name, value}`; the formatter picks the template and
+fills in numbers that are *already computed*. This satisfies the non-negotiable that the model never
+computes or recalls a stat, while still giving the full pipeline `CLAUDE.md` describes, not a
+truncated one.
+
 ```
 question
    ↓
 [ cache lookup ]                          ← Nick (a local model takes 2-5s; caching makes the demo feel real)
    ↓ miss
-[ RULE-BASED GATE — parser.py → planner.py ]   ← exists (Ashish owns tuning it)
+[ NLU — RULE-BASED GATE: parser.py → planner.py ]   ← exists (Ashish owns tuning it)
    ↓ Intent.is_answerable() ?
    ├── YES → build_sql (template, allow-listed) → DuckDB execute → AnswerCard(path="rule")
    │
    └── NO  ↓
-       [ build_prompt + few-shot ]        ← Ashish
+       [ NLU/text-to-SQL — build_prompt + few-shot ]   ← Ashish
           ↓
        [ LLM provider: Ollama | Claude ]  ← Nick (one interface, two impls)
           ↓
@@ -86,14 +118,17 @@ question
           ↓
        AnswerCard(path="llm")
    ↓
+[ GENERATION — format_answer(): number → sentence ]   ← Ashish, template-based, no LLM
+   ↓
 AnswerCard { answer, sql, rows, refused, reason, path }
    ↓
 [ FastAPI /api/ask ] → [ web UI ]         ← Nick
 ```
 
 **The non-negotiables from `CLAUDE.md` still hold and are all satisfied by this design:** the model
-only writes language (SQL text), DuckDB does every arithmetic operation, nothing executes without
-passing the allow-list guard, and an unresolvable question returns a refusal rather than a number.
+only writes language (SQL text and, in generation, the sentence shape — never the number), DuckDB
+does every arithmetic operation, nothing executes without passing the allow-list guard, and an
+unresolvable question returns a refusal rather than a number.
 The rule-based gate doesn't weaken any of that — it's strictly *more* conservative than the LLM path,
 since it never generates free-form SQL at all.
 
@@ -186,7 +221,7 @@ Nick owns the server and frontend files. Your sessions here are about the *conte
 | # | Session | Definition of done |
 |---|---|---|
 | **11** | **Wire `answer()` into Nick's stub endpoint.** Delete the stub, import the real thing. | `curl localhost:8000/api/ask -d '{"q":"..."}'` returns a real card |
-| **12** | **Answer formatting.** A raw float is not an answer. `33.4954` → `33.5 PPG`. Percentages, ordinals, player names from ids, season labels (`2025` → `2024-25`). | A formatting function with tests; the UI shows human strings |
+| **12** | **The generation stage.** `format_answer()` — this is the pipeline's fifth stage from `CLAUDE.md` (`... → DuckDB execution → generation → answer card`), not a cosmetic afterthought. Template-based, not an LLM call: `33.4954` → "33.5 PPG", percentages, ordinals, player names from ids, season labels (`2025` → `2024-25`), and full-sentence phrasing for the leaderboard shape ("X led the league with Y"). | A formatting function with tests; the UI shows sentences, not raw JSON |
 | **13** | **Pick the demo questions.** 6 questions that show range: a simple average, a leaderboard with a qualifier, a head-to-head, a rate stat where the qualifier matters, a playoff split, and one that refuses. Verify each. | 6 questions that reliably work, hard-coded as UI chips |
 | **14** | **Failure polish.** Make the refusal state look deliberate rather than broken. Add the latency indicator. Check what happens with an empty query, a 500-word query, a non-NBA query. | No state of the UI looks like a crash |
 | **15** | **Ship.** README with a GIF, the final eval number, and the honest limitations list. Then, optionally, swap in the Claude API behind Nick's provider interface and re-run the eval to see the gap. | **A URL you can open in front of someone** |
