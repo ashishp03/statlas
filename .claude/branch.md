@@ -1,28 +1,37 @@
-# main — Branch Context
+# data-exploration — Branch Context
 
-> Branch overlay for `main` (the trunk). The shared, canonical project context lives in the root
-> `CLAUDE.md`; THIS file adds only what is specific to `main`. Protected by `.gitattributes`
-> (`merge=ours`) so it never merges across branches.
+> Branch overlay for `data-exploration` (created 2026-06-13). The shared, canonical project context lives
+> in the root `CLAUDE.md` (and subdirectory `CLAUDE.md` files) on `main`; THIS file adds only what
+> is specific to this branch. Protected by `.gitattributes` (`merge=ours`) so it never merges
+> across branches.
 
 ## Purpose
-`main` is the **trunk**: the shared source of truth for environment setup and project context. It
-holds the toolchain (`pyproject.toml`, `uv.lock`, `.python-version`), the root `CLAUDE.md` +
-`README.md`, and the branch-model infrastructure (`.gitattributes`, `scripts/`,
-`.claude/branch.template.md`). No feature work happens here.
+Explore NBA data api, find its structure, restrcitions, and understand how to use it.
 
 ## Scope — what belongs on this branch
-- Environment deps + lockfile (`pyproject.toml`, `uv.lock`, `.python-version`, `requirements.txt`)
-- Root context/setup docs (`CLAUDE.md`, `README.md`) and the branch-model infra
-- **Not** product/pipeline code — that lives on its own feature branch and is **not** merged back
-  here (the build is paused; the p0 scaffold lives on the work branches)
-- **Not** learning/study material — that lives on the `learning` branch
-- **Not** nba_api EDA/data exploration — that belongs on a `data-exploration` branch
+- Owns: `notebooks/` (`initial_eda*.ipynb`) — read-only exploration of NBA data sources; and
+  `experiments/vN_*/` — self-contained storage/retrieval + text-to-SQL benchmarks (each carries its own
+  pipeline, data, an experiment-local eval set, and docs). Findings flow to `main`; experiment code does not.
+- Belongs here: probing `nba_api` endpoints (history depth, columns, restrictions), evaluating
+  alternative sources (Basketball-Reference, balldontlie, pbpstats, hoopR, shufinskiy, Kaggle), and
+  documenting native-vs-derived metric availability.
+- Does NOT belong here: the **product** pipeline (`src/statlas/**`), its warehouse builder, or its
+  golden eval set — those live on the product branch (experiment-local pipelines/eval under
+  `experiments/` are fine and separate). Findings flow into `CLAUDE.md` architecture decisions on `main`
+  via a deps/docs PR, never by merging notebooks or experiment code into `main`.
 
 ## Branch-specific instructions
-- Treat `main` as docs + setup only. To start real work, branch off main:
-  `scripts/new-branch.sh <name> "purpose"` (scaffolds this overlay from the template + commits).
-- Edit shared files (root `CLAUDE.md`, `README.md`, toolchain) HERE; feature branches pull updates
-  with `git merge main` (their own `.claude/branch.md` is preserved via `merge=ours`).
+- Notebooks use **Polars** (convert nba_api pandas once with `pl.from_pandas`); execute them with
+  `uv run --with jupyter jupyter nbconvert --execute ...` (that provisions jupyter). Deps are managed by
+  **uv** (`uv add`/`uv sync`); plain `python script.py` is fine for running scripts.
+- Wrap every live API call in try/except + `time.sleep` to tolerate nba_api flakiness/rate limits;
+  prefer **binary-searching** boundaries over asserting years.
+- Use the **V3** box-score/play-by-play endpoints — the V2 variants are deprecated and return empty.
+- balldontlie cells must no-op gracefully when `BALLDONTLIE_API_KEY` is unset.
+
+## Subdirectory notes (branch-specific)
+- TODO: `<path/>` — note (only if a folder needs branch-specific guidance; otherwise its shared
+  `CLAUDE.md` already covers it)
 
 ## Rolling log (most recent first)
 - 2026-06-22 — Added the shared Claude Code automation setup (commit `5226551`): PreToolUse hooks

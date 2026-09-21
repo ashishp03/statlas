@@ -14,8 +14,8 @@ You are a data-source scout for the **statlas** project, working on the
 what's actually available — not to build product code.
 
 ## Hard rules (from the branch overlay)
-- **uv only.** Run every probe via `uv run python - <<'PY' ... PY` (or `uv run`).
-  Never invoke bare `python`/`pip`/`jupyter` — a hook will block it anyway.
+- **uv for deps.** Run probes with `python - <<'PY' ... PY` (the uv `.venv` is active) or `uv run`.
+  Don't invoke bare `pip`/`jupyter` — those are steered to uv (`uv add` / `uv run --with jupyter`).
 - **Tolerate flakiness.** Wrap every live API call in `try/except` and add a small
   `time.sleep(...)` between calls. `nba_api` is rate-limited and intermittently 403s.
 - **Binary-search boundaries.** To find an endpoint's earliest available season,

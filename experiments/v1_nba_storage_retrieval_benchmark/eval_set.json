@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "purpose": "Golden eval set — the single correctness backbone for the experiment (Decision D4).",
+    "used_by": [
+      "S3 retrieval: every store must return expected_value for each item (correctness parity gate before timing)",
+      "S3 retrieval: the same items are the timed workload",
+      "S4 text-to-SQL: each model's drafted SQL is executed on DuckDB and checked vs expected_value"
+    ],
+    "expected_value": "null until resolved — pipeline.resolve_eval runs canonical_sql on the DuckDB store (S2) and fills it. A few items carry a hand-checked 'known' anchor from public sources.",
+    "tolerance_policy": "TWO-TIER (Decision D6). Correctness GATE: numeric items must match the store/canonical expected_value within `tolerance` (1e-07 = float rounding only; PPG/RPG/ratios are EXACT rationals = sum/count, so anything looser would hide real bugs), counts and strings are exact. SEPARATE soft check: the optional `known` public anchors are rounded to 1 decimal, so they are compared within `known_tolerance` and are INFORMATIONAL sanity checks, never a pass/fail gate.",
+    "known_tolerance": 0.1,
+    "answer_types": {"numeric": "abs(got - expected) <= tolerance", "string": "case-insensitive exact match"},
+    "tables": {
+      "game_logs": "player_id, season(end-year int), game_date, opponent_abbr, is_playoff(0/1), min, pts, reb, ast, plus_minus  [LeagueGameLog, 5 recent seasons]",
+      "players": "player_id, full_name, team_abbr  [dim from latest season aggregates]",
+      "player_season": "player_id, player_name, team_abbr, season, season_type, gp, min, pts, reb, ast, ... , off_rating, def_rating, net_rating, usg_pct, ts_pct, efg_pct, pie, poss  [LeagueDashPlayerStats PerGame Base+Advanced, 30 seasons]",
+      "bbref_advanced": "bbref_slug, full_name, season, per, bpm, vorp, ws, ...  [Basketball-Reference, 2024-25]",
+      "player_crosswalk": "canonical_id, nba_player_id, bbref_slug, bdl_id, full_name"
+    },
+    "schema_version": 1
+  },
+  "items": [
+    {
+      "id": "lebron_ppg_2025_reg",
+      "question": "What did LeBron James average in points per game in the 2024-25 regular season?",
+      "canonical_sql": "SELECT AVG(pts) AS answer FROM game_logs WHERE player_id = 2544 AND season = 2025 AND is_playoff = 0",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "row-wise game_logs aggregate (point lookup + filter). PPG is an exact rational."
+    },
+    {
+      "id": "curry_reb_2024_reg",
+      "question": "How many rebounds per game did Stephen Curry average in the 2023-24 regular season?",
+      "canonical_sql": "SELECT AVG(reb) AS answer FROM game_logs WHERE player_id = 201939 AND season = 2024 AND is_playoff = 0",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "row-wise game_logs aggregate on a different metric."
+    },
+    {
+      "id": "jokic_games_2025_reg",
+      "question": "How many regular-season games did Nikola Jokic play in 2024-25 (within our game-log window)?",
+      "canonical_sql": "SELECT COUNT(*) AS answer FROM game_logs WHERE player_id = 203999 AND season = 2025 AND is_playoff = 0",
+      "answer_type": "numeric", "tolerance": 0, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "integer count; exact match required."
+    },
+    {
+      "id": "giannis_ppg_vs_bos_2025_reg",
+      "question": "What did Giannis Antetokounmpo average in points against Boston in the 2024-25 regular season?",
+      "canonical_sql": "SELECT AVG(pts) AS answer FROM game_logs WHERE player_id = 203507 AND opponent_abbr = 'BOS' AND season = 2025 AND is_playoff = 0",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "row-wise with opponent filter (small sample); resolver fills actual."
+    },
+    {
+      "id": "lebron_playoff_ppg_2025",
+      "question": "What did LeBron James average in points per game in the 2024-25 playoffs?",
+      "canonical_sql": "SELECT AVG(pts) AS answer FROM game_logs WHERE player_id = 2544 AND season = 2025 AND is_playoff = 1",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "playoff filter (is_playoff = 1)."
+    },
+    {
+      "id": "lebron_minus_curry_ppg_2025_reg",
+      "question": "In the 2024-25 regular season, how many more points per game did LeBron average than Stephen Curry?",
+      "canonical_sql": "SELECT (SELECT AVG(pts) FROM game_logs WHERE player_id = 2544 AND season = 2025 AND is_playoff = 0) - (SELECT AVG(pts) FROM game_logs WHERE player_id = 201939 AND season = 2025 AND is_playoff = 0) AS answer",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "head-to-head row-wise comparison across two players."
+    },
+    {
+      "id": "scoring_leader_2025_reg_minGP",
+      "question": "Who led the NBA in points per game in the 2024-25 regular season (minimum 58 games)?",
+      "canonical_sql": "SELECT player_name AS answer FROM player_season WHERE season = 2025 AND season_type = 'Regular Season' AND gp >= 58 ORDER BY pts DESC LIMIT 1",
+      "answer_type": "string", "tolerance": 0, "expected_value": null, "workload": "OLAP", "known": "Shai Gilgeous-Alexander",
+      "notes": "leaderboard WITH min-games qualifier — the correctness rule. Hand-check anchor: SGA won the 2024-25 scoring title (~32.7)."
+    },
+    {
+      "id": "scoring_leader_2025_reg_noMin",
+      "question": "Who had the highest points-per-game in 2024-25 with NO games qualifier (the trap)?",
+      "canonical_sql": "SELECT player_name AS answer FROM player_season WHERE season = 2025 AND season_type = 'Regular Season' ORDER BY pts DESC LIMIT 1",
+      "answer_type": "string", "tolerance": 0, "expected_value": null, "workload": "OLAP", "known": null,
+      "notes": "TRAP: without gp >= 58 a tiny-sample player can 'lead'. Demonstrates why the qualifier matters; expected likely differs from the qualified leader."
+    },
+    {
+      "id": "assists_leader_2024_reg_minGP",
+      "question": "Who led the NBA in assists per game in the 2023-24 regular season (minimum 58 games)?",
+      "canonical_sql": "SELECT player_name AS answer FROM player_season WHERE season = 2024 AND season_type = 'Regular Season' AND gp >= 58 ORDER BY ast DESC LIMIT 1",
+      "answer_type": "string", "tolerance": 0, "expected_value": null, "workload": "OLAP", "known": null,
+      "notes": "column-wise leaderboard, different season + metric."
+    },
+    {
+      "id": "league_ppg_2025_reg_minGP",
+      "question": "Across qualified players (>=58 games), what was the average points-per-game in 2024-25?",
+      "canonical_sql": "SELECT AVG(pts) AS answer FROM player_season WHERE season = 2025 AND season_type = 'Regular Season' AND gp >= 58",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLAP", "known": null,
+      "notes": "full-column aggregate."
+    },
+    {
+      "id": "league_ppg_1997_reg_minGP",
+      "question": "Across qualified players (>=58 games), what was the average points-per-game in 1996-97?",
+      "canonical_sql": "SELECT AVG(pts) AS answer FROM player_season WHERE season = 1997 AND season_type = 'Regular Season' AND gp >= 58",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLAP", "known": null,
+      "notes": "concatenate-across-time: same query, earliest modern season."
+    },
+    {
+      "id": "net_rating_leader_2025_reg_minGP",
+      "question": "Which qualified player had the best net rating in 2024-25 (minimum 58 games)?",
+      "canonical_sql": "SELECT player_name AS answer FROM player_season WHERE season = 2025 AND season_type = 'Regular Season' AND gp >= 58 ORDER BY net_rating DESC LIMIT 1",
+      "answer_type": "string", "tolerance": 0, "expected_value": null, "workload": "OLAP", "known": null,
+      "notes": "native advanced metric (net_rating) from nba_api Advanced."
+    },
+    {
+      "id": "usg_leader_2025_reg_minGP",
+      "question": "Which qualified player had the highest usage rate in 2024-25 (minimum 58 games)?",
+      "canonical_sql": "SELECT player_name AS answer FROM player_season WHERE season = 2025 AND season_type = 'Regular Season' AND gp >= 58 ORDER BY usg_pct DESC LIMIT 1",
+      "answer_type": "string", "tolerance": 0, "expected_value": null, "workload": "OLAP", "known": null,
+      "notes": "native advanced metric (usg_pct)."
+    },
+    {
+      "id": "jokic_vorp_2025_bbref",
+      "question": "What was Nikola Jokic's VORP in 2024-25 (Basketball-Reference)?",
+      "canonical_sql": "SELECT b.vorp AS answer FROM bbref_advanced b JOIN player_crosswalk x ON b.bbref_slug = x.bbref_slug WHERE x.nba_player_id = 203999 AND b.season = 2025",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLAP", "known": 9.8,
+      "notes": "CROSS-SOURCE JOIN on canonical crosswalk (nba_id -> bbref_slug). Hand-check anchor: repo EDA found Jokic led VORP at 9.8."
+    },
+    {
+      "id": "vorp_leader_2025_bbref",
+      "question": "Who led the NBA in VORP in 2024-25 (Basketball-Reference)?",
+      "canonical_sql": "SELECT full_name AS answer FROM bbref_advanced WHERE season = 2025 ORDER BY vorp DESC LIMIT 1",
+      "answer_type": "string", "tolerance": 0, "expected_value": null, "workload": "OLAP", "known": "Nikola Jokic",
+      "notes": "derived metric only BBRef provides; tests the second source end-to-end."
+    },
+    {
+      "id": "durant_ppg_2024_reg",
+      "question": "What did Kevin Durant average in points per game in the 2023-24 regular season?",
+      "canonical_sql": "SELECT AVG(pts) AS answer FROM game_logs WHERE player_id = 201142 AND season = 2024 AND is_playoff = 0",
+      "answer_type": "numeric", "tolerance": 1e-07, "expected_value": null, "workload": "OLTP", "known": null,
+      "notes": "second row-wise anchor for cross-store parity."
+    }
+  ]
+}

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# PreToolUse(Edit|Write|MultiEdit) guard: protect generated/locked files everywhere,
-# and enforce branch scope (no product code on the data-exploration branch).
+# PreToolUse(Edit|Write|MultiEdit) guard: protect generated/locked files everywhere.
 set -euo pipefail
 
 path="$(jq -r '.tool_input.file_path // empty')"
@@ -15,15 +14,7 @@ case "$path" in
     exit 2 ;;
 esac
 
-# 2) Branch scope: product/pipeline code does not belong on data-exploration.
-#    Branch-aware so this rule is a no-op on the product / main branches.
-branch="$(git -C "${CLAUDE_PROJECT_DIR:-.}" rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')"
-if [ "$branch" = "data-exploration" ]; then
-  case "$path" in
-    *src/statlas/*)
-      echo "Blocked: '$path' is product code (src/statlas/**) — out of scope on 'data-exploration'." >&2
-      echo "  This branch is read-only NBA data exploration; product changes live on the product branch." >&2
-      exit 2 ;;
-  esac
-fi
+# NOTE: this used to also block src/statlas/** on data-exploration ("product code doesn't belong
+# here"). Dropped 2026-09-20: data-exploration now builds real src/statlas/ content directly
+# (learning will never merge to main, so there's no cross-branch collision risk to guard against).
 exit 0
