@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="350" viewBox="0 0 900 350" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="900" height="350" fill="#ffffff"/>
+  <text x="14" y="28" font-size="17" font-weight="700" fill="#111">NBA data availability by source — empirically verified (2026-06-21)</text>
+  <text x="14" y="46" font-size="11.5" fill="#666">Each bar spans the earliest season with data through the present.</text>
+
+  <!-- gridlines + decade axis: x(year) = 175 + (year-1946)*8.8125 -->
+  <g stroke="#e9e9e9" stroke-width="1">
+    <line x1="210.25" y1="64" x2="210.25" y2="296"/>
+    <line x1="298.4"  y1="64" x2="298.4"  y2="296"/>
+    <line x1="386.5"  y1="64" x2="386.5"  y2="296"/>
+    <line x1="474.6"  y1="64" x2="474.6"  y2="296"/>
+    <line x1="562.75" y1="64" x2="562.75" y2="296"/>
+    <line x1="650.9"  y1="64" x2="650.9"  y2="296"/>
+    <line x1="739"    y1="64" x2="739"    y2="296"/>
+    <line x1="827.1"  y1="64" x2="827.1"  y2="296"/>
+  </g>
+  <g font-size="10.5" fill="#999" text-anchor="middle">
+    <text x="210.25" y="312">1950</text>
+    <text x="298.4"  y="312">1960</text>
+    <text x="386.5"  y="312">1970</text>
+    <text x="474.6"  y="312">1980</text>
+    <text x="562.75" y="312">1990</text>
+    <text x="650.9"  y="312">2000</text>
+    <text x="739"    y="312">2010</text>
+    <text x="827.1"  y="312">2020</text>
+  </g>
+
+  <!-- era marker lines -->
+  <g stroke-dasharray="4 3" stroke-width="1.2">
+    <line x1="412.9" y1="60" x2="412.9" y2="296" stroke="#c0392b"/>
+    <line x1="465.8" y1="60" x2="465.8" y2="296" stroke="#c0392b"/>
+    <line x1="615.6" y1="60" x2="615.6" y2="296" stroke="#2e86c1"/>
+    <line x1="765.4" y1="60" x2="765.4" y2="296" stroke="#b9770e"/>
+  </g>
+  <g font-size="9" fill="#c0392b" text-anchor="middle">
+    <text x="412.9" y="58">STL/BLK/TOV '73</text>
+    <text x="465.8" y="58" dy="-10">3PT line '79</text>
+  </g>
+  <text x="615.6" y="58" font-size="9" fill="#2e86c1" text-anchor="middle">modern era '96</text>
+  <text x="765.4" y="58" font-size="9" fill="#b9770e" text-anchor="middle">tracking '13</text>
+
+  <!-- bars: y rows -->
+  <!-- Row 1: BBRef advanced (1947+) -->
+  <rect x="183.8" y="72" width="696.2" height="22" rx="3" fill="#8e44ad"/>
+  <text x="168" y="87" font-size="11" fill="#333" text-anchor="end">BBRef advanced</text>
+  <text x="190" y="87" font-size="10" fill="#fff">PER · BPM · VORP · WS  (scrape, ~1947+)</text>
+
+  <!-- Row 2: LeagueLeaders basic (1951+) -->
+  <rect x="219.05" y="108" width="660.95" height="22" rx="3" fill="#27ae60"/>
+  <text x="168" y="123" font-size="11" fill="#333" text-anchor="end">LeagueLeaders</text>
+  <text x="225" y="123" font-size="10" fill="#fff">basic season totals  (1951-52+)</text>
+
+  <!-- Row 3: LeagueDash Base+Advanced (1996+) -->
+  <rect x="615.6" y="144" width="264.4" height="22" rx="3" fill="#2e86c1"/>
+  <text x="168" y="159" font-size="11" fill="#333" text-anchor="end">LeagueDash Base+Adv</text>
+  <text x="621" y="159" font-size="10" fill="#fff">ratings·USG·TS·PIE 1996+</text>
+
+  <!-- Row 4: ShotChartDetail (1996+) -->
+  <rect x="615.6" y="180" width="264.4" height="22" rx="3" fill="#2e86c1"/>
+  <text x="168" y="195" font-size="11" fill="#333" text-anchor="end">ShotChartDetail</text>
+  <text x="621" y="195" font-size="10" fill="#fff">shot x/y locations 1996+</text>
+
+  <!-- Row 5: PlayByPlayV3 (1996+) -->
+  <rect x="615.6" y="216" width="264.4" height="22" rx="3" fill="#2e86c1"/>
+  <text x="168" y="231" font-size="11" fill="#333" text-anchor="end">PlayByPlayV3</text>
+  <text x="621" y="231" font-size="10" fill="#fff">event stream 1996+ (V2 is dead)</text>
+
+  <!-- Row 6: Tracking (2013+) -->
+  <rect x="765.4" y="252" width="114.6" height="22" rx="3" fill="#e67e22"/>
+  <text x="168" y="267" font-size="11" fill="#333" text-anchor="end">LeagueDashPtStats</text>
+  <text x="759" y="267" font-size="10" fill="#b9770e" text-anchor="end">tracking 2013+</text>
+
+  <!-- legend -->
+  <g font-size="10" fill="#555">
+    <rect x="175" y="328" width="12" height="12" rx="2" fill="#8e44ad"/><text x="192" y="338">BBRef (scrape)</text>
+    <rect x="300" y="328" width="12" height="12" rx="2" fill="#27ae60"/><text x="317" y="338">nba_api deep history</text>
+    <rect x="460" y="328" width="12" height="12" rx="2" fill="#2e86c1"/><text x="477" y="338">nba_api modern (1996+)</text>
+    <rect x="640" y="328" width="12" height="12" rx="2" fill="#e67e22"/><text x="657" y="338">nba_api tracking (2013+)</text>
+  </g>
+</svg>

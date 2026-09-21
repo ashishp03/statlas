@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1010" height="350" viewBox="0 0 1010 350" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="1010" height="350" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#888"/>
+    </marker>
+  </defs>
+  <text x="14" y="26" font-size="15" font-weight="700" fill="#111">Query routing — route to the best table</text>
+
+  <!-- Question -->
+  <rect x="16" y="138" width="120" height="56" rx="6" fill="#34495e"/>
+  <text x="76" y="162" font-size="11" fill="#fff" text-anchor="middle">Natural-language</text>
+  <text x="76" y="178" font-size="11" fill="#fff" text-anchor="middle">question</text>
+
+  <!-- Classifier -->
+  <rect x="160" y="132" width="130" height="68" rx="6" fill="#5d6d7e"/>
+  <text x="225" y="158" font-size="11" fill="#fff" text-anchor="middle">NLU intent +</text>
+  <text x="225" y="173" font-size="11" fill="#fff" text-anchor="middle">metric-type</text>
+  <text x="225" y="188" font-size="11" fill="#fff" text-anchor="middle">classifier</text>
+  <line x1="136" y1="166" x2="158" y2="166" stroke="#888" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+  <!-- metric branches + source tables (5 rows) -->
+  <!-- row centers: 36,100,164,228,292 -->
+  <g font-size="10">
+    <!-- branch lines from classifier right edge (290,166) -->
+    <path d="M290,166 C320,166 330,36 358,36"   fill="none" stroke="#bbb" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M290,166 C320,166 330,100 358,100" fill="none" stroke="#bbb" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M290,166 L358,166"                  fill="none" stroke="#bbb" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M290,166 C320,166 330,228 358,228" fill="none" stroke="#bbb" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M290,166 C320,166 330,292 358,292" fill="none" stroke="#bbb" stroke-width="1.4" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- metric boxes x=360 w=200 -->
+  <g font-size="10.5" fill="#222">
+    <rect x="360" y="16"  width="200" height="40" rx="5" fill="#eafaf1" stroke="#27ae60"/>
+    <text x="370" y="33">Counting / box stats</text><text x="370" y="48" fill="#555" font-size="9.5">pts·reb·ast·min·plus_minus</text>
+    <rect x="360" y="80"  width="200" height="40" rx="5" fill="#eaf2fb" stroke="#2e86c1"/>
+    <text x="370" y="97">NBA advanced</text><text x="370" y="112" fill="#555" font-size="9.5">OffRtg·DefRtg·USG·TS·PIE</text>
+    <rect x="360" y="144" width="200" height="40" rx="5" fill="#f5eafb" stroke="#8e44ad"/>
+    <text x="370" y="161">BBRef-only</text><text x="370" y="176" fill="#555" font-size="9.5">PER·BPM·VORP·Win Shares</text>
+    <rect x="360" y="208" width="200" height="40" rx="5" fill="#eaf2fb" stroke="#2e86c1"/>
+    <text x="370" y="225">Shot location</text><text x="370" y="240" fill="#555" font-size="9.5">made/missed x·y</text>
+    <rect x="360" y="272" width="200" height="40" rx="5" fill="#fdf2e6" stroke="#e67e22"/>
+    <text x="370" y="289">Player tracking</text><text x="370" y="304" fill="#555" font-size="9.5">speed·distance·hustle</text>
+  </g>
+
+  <!-- short arrows to source boxes -->
+  <g stroke="#bbb" stroke-width="1.4">
+    <line x1="560" y1="36"  x2="596" y2="36"  marker-end="url(#arrow)"/>
+    <line x1="560" y1="100" x2="596" y2="100" marker-end="url(#arrow)"/>
+    <line x1="560" y1="164" x2="596" y2="164" marker-end="url(#arrow)"/>
+    <line x1="560" y1="228" x2="596" y2="228" marker-end="url(#arrow)"/>
+    <line x1="560" y1="292" x2="596" y2="292" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- source/table boxes x=598 w=224 -->
+  <g font-size="10" fill="#222">
+    <rect x="598" y="16"  width="226" height="40" rx="5" fill="#fff" stroke="#27ae60"/>
+    <text x="608" y="33">game_logs (nba_api) 1996+</text><text x="608" y="47" fill="#555" font-size="9">+ LeagueLeaders pre-96 basic</text>
+    <rect x="598" y="80"  width="226" height="40" rx="5" fill="#fff" stroke="#2e86c1"/>
+    <text x="608" y="97">player_advanced (nba_api)</text><text x="608" y="111" fill="#555" font-size="9">Advanced MeasureType · 1996+</text>
+    <rect x="598" y="144" width="226" height="40" rx="5" fill="#fff" stroke="#8e44ad"/>
+    <text x="608" y="161">bbref_advanced (scrape)</text><text x="608" y="175" fill="#555" font-size="9">offline enrichment · ~1947+</text>
+    <rect x="598" y="208" width="226" height="40" rx="5" fill="#fff" stroke="#2e86c1"/>
+    <text x="608" y="225">shots (ShotChartDetail)</text><text x="608" y="239" fill="#555" font-size="9">1996+</text>
+    <rect x="598" y="272" width="226" height="40" rx="5" fill="#fff" stroke="#e67e22"/>
+    <text x="608" y="289">tracking (PtStats)</text><text x="608" y="303" fill="#555" font-size="9">2013+</text>
+  </g>
+
+  <!-- converging arrows to DuckDB -->
+  <g stroke="#999" stroke-width="1.4" fill="none">
+    <path d="M824,36  C860,36  866,150 884,150" marker-end="url(#arrow)"/>
+    <path d="M824,100 C860,100 866,158 884,158" marker-end="url(#arrow)"/>
+    <path d="M824,164 L884,164" marker-end="url(#arrow)"/>
+    <path d="M824,228 C860,228 866,178 884,178" marker-end="url(#arrow)"/>
+    <path d="M824,292 C860,292 866,186 884,186" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- DuckDB -->
+  <rect x="886" y="128" width="110" height="78" rx="6" fill="#1f3a5f"/>
+  <text x="941" y="152" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">DuckDB</text>
+  <text x="941" y="168" font-size="9" fill="#cfe2f3" text-anchor="middle">all arithmetic</text>
+  <text x="941" y="181" font-size="9" fill="#cfe2f3" text-anchor="middle">+ min-games</text>
+  <text x="941" y="194" font-size="9" fill="#cfe2f3" text-anchor="middle">qualifier</text>
+
+  <text x="941" y="224" font-size="9.5" fill="#1f3a5f" text-anchor="middle">Answer card (SQL + rows)</text>
+</svg>

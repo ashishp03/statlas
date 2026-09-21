@@ -20,7 +20,8 @@ uv run --with jupyter jupyter nbconvert --to notebook --execute --inplace "<NOTE
 ```
 
 Rules:
-- Never use bare `python`/`jupyter` (a PreToolUse hook blocks it) — always go through `uv run`.
+- Run notebooks through `uv run --with jupyter` (it provisions jupyter, which isn't a base dep; a hook
+  steers bare `jupyter`/`pip` to uv). Plain `python script.py` is fine for running scripts.
 - `--inplace` writes outputs back into the same file; confirm the path before running
   if it's ambiguous.
 - nba_api cells can be slow/flaky. If execution fails on a live-API cell, report the
