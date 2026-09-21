@@ -24,9 +24,11 @@ you're never blocked on him.
 | **SELECT-only SQL guard** | `pipeline/s4_sql_guard.py`, ~420 lines — sanitizer, relation extraction, table/column allow-list, `EXPLAIN`-based validation |
 | **Text-to-SQL harness** | `pipeline/s4_text_to_sql.py` — schema-grounded prompt, SQL extraction, Ollama call, execution, judging at 1e-7 tolerance. **16/16 in MOCK mode; never run against a real model** |
 | **Eval harness** | 16 questions with canonical SQL + expected values. A second 5-question set on the `learning` branch, verified green |
+| **Rule-based gate** | `nlu/parser.py` + `query/planner.py` + `entities/resolver.py` (`learning` branch, ~185 lines). Regex NLU → structured `Intent` → fixed, allow-listed SQL template. Deterministic, free, can't be injected — narrow on purpose (single player, 5 metrics, avg/sum). This is the MVP's first stop, not a discarded prototype — see below |
 
 So: the data layer is done and measured. What's missing is a **service**, a **UI**, and a real model
-actually driving it.
+actually driving it — and a bit of wiring so the free, safe, deterministic path answers what it can
+before anything touches the LLM.
 
 ---
 
@@ -76,12 +78,21 @@ class AnswerCard:
     rows: list[dict] = field(default_factory=list)
     refused: bool = False
     reason: str | None = None
-    model: str | None = None
+    path: Literal["rule", "llm"] | None = None   # which engine answered — see below
+    model: str | None = None         # only set when path == "llm"
     latency_ms: float | None = None
     cached: bool = False
 
 def answer(question: str) -> AnswerCard: ...
 ```
+
+**One thing worth knowing up front:** `answer()` isn't LLM-only. There's a deterministic gate in
+front of it — the existing rule-based `parser.py → planner.py` (regex NLU → fixed SQL template,
+allow-listed to 5 metrics) answers what it can, instantly and for free; only what it can't resolve
+falls through to the LLM path you're building the provider/guard for. `path` on the card tells you
+(and the UI) which one answered. This matters for your side of the work mainly as: the guard/LLM
+path only ever sees the harder half of the traffic, and the UI should show `path` as part of the
+transparency card, not hide it.
 
 Ashish implements `answer()`. **You build the entire server and frontend against a stub** that
 returns a hard-coded `AnswerCard`, so the UI can be finished before the engine works.
@@ -147,9 +158,12 @@ A local 7B model takes 2-5s per query. The demo has to feel deliberate anyway.
 
 - **FastAPI**: `POST /api/ask` → `AnswerCard` as JSON. Plus `/health`. Streaming isn't needed.
 - **Frontend**: one page, no build step if you can manage it — search box, answer card, a
-  disclosure panel showing the SQL, a table of the rows used, and a distinct refusal state.
-  It should look intentional, not like a debug view. This is the artifact people will judge.
-- Example-question chips (Ashish will supply the 6 questions in week 3).
+  disclosure panel showing the SQL, a table of the rows used, a distinct refusal state, and a small
+  badge for `path` (instant/rule vs. generated/LLM — genuinely nice for a demo, since a rule-based
+  hit answers before the loading state even shows). It should look intentional, not like a debug
+  view. This is the artifact people will judge.
+- Example-question chips (Ashish will supply the 6 questions in week 3 — plan for a mix of both
+  paths so the demo shows the gate working, not just the LLM).
 - The loading state carries the latency honestly rather than hiding it.
 
 **Ship:** `server/` + `web/`, running against your stub from day one.
@@ -195,8 +209,12 @@ that emit warnings on every command. Ashish is cleaning the refs; the rest is yo
 
 You're coming in fresh, which is useful. Two places where an outside opinion would genuinely help:
 
-- **Is the single-path architecture right?** We deliberately dropped the existing rule-based
-  parser/planner and went LLM-only for the MVP. That's a scope decision, and it might be wrong.
+- **Is the gate threshold right?** The MVP routes through a deterministic rule-based path first
+  (`parser.py` → `planner.py` → fixed SQL template) and only falls through to the LLM when the
+  rule-based side can't resolve the question — see `MVP-3-WEEK-PLAN.md` §1 for the diagram. It's
+  a clean boolean (`Intent.is_answerable()`) on purpose. If you see a cheap way to widen what the
+  rule-based path safely covers without turning it into a second free-form surface, that's worth
+  raising — but growing it mid-sprint is explicitly out of scope for the 3 weeks.
 - **Is lexical SQL validation defensible?** If your read is that it needs to be AST-based before
   this is shown to anyone, say so early — that changes the plan.
 

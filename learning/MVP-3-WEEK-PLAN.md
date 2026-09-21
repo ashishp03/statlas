@@ -3,16 +3,23 @@
 **Written:** 2026-09-20 · **Target:** a demoable web app by 2026-10-09
 **Budget:** Ashish ~1h × weekdays = **~15 hours**. Nick: async work packages, sized separately.
 
+**Scope, explicitly:** NBA only. A basic web UI. Only the data already in the warehouse (§0
+below) — no new sources, no new sports, no scraping added mid-sprint. Two answer paths — the
+existing rule-based gate plus an LLM fallback (§1) — not one; that routing decision stays in
+scope, only *widening what the rule-based side covers* is out of scope.
+
 ---
 
 ## 0. The one thing to understand before you start
 
-You are not starting from scratch. You are **joining two halves that have never been connected**.
+You are not starting from scratch. You are **joining two halves that have never been connected**,
+and both halves are load-bearing for the MVP — this isn't "keep the old code as reference," the
+`learning`-branch pipeline is the deterministic front half of the architecture in §1.
 
 | Half | Where it lives | What's in it |
 |---|---|---|
-| **The shape** | `learning` branch | `parser → planner → executor → engine`, answer cards, `tests/run_eval.py` (verified green 5/5 on 2026-09-20) |
-| **The substance** | `data-exploration` branch | Real 30-season DuckDB warehouse, a hardened SELECT-only guard, a full text-to-SQL harness, 16-question eval |
+| **The gate** | `learning` branch | `parser → planner`, a working rule-based Intent→SQL engine (`tests/run_eval.py` verified green 5/5 on 2026-09-20) — the MVP's first stop for every question |
+| **The fallback** | `data-exploration` branch | Real 30-season DuckDB warehouse, a hardened SELECT-only guard, a full text-to-SQL harness, 16-question eval — where anything the gate can't resolve goes |
 
 The `data-exploration` half is much further along than your log remembers. Specifically,
 `experiments/v1_nba_storage_retrieval_benchmark/pipeline/s4_text_to_sql.py` **already contains**:
@@ -44,32 +51,56 @@ bbref_advanced     569 rows   per, bpm, vorp, ws
 
 ## 1. Architecture of the MVP
 
-Deliberately **one** path. No rule-based parser, no Intent dataclass, no fallback chain. Those are
-v2 concerns; they will eat all 15 hours if you let them.
+**Two paths, one gate, in front of everything.** The existing rule-based `parser.py`/`planner.py`
+(the p0 scaffold, `learning` branch) is a real deterministic engine: regex/keyword NLU fills a
+structured `Intent`, then a fixed SQL template — allow-listed to 5 metrics, parameterized filters —
+answers it. Nothing free-form ever reaches SQL on that path, so it's instant, free, and can't be
+injected. It's just *narrow*: single player, one of `pts/reb/ast/plus_minus/min`, avg/sum, optional
+opponent/season/playoffs. No leaderboards, no advanced metrics, no comparisons.
+
+The gate is simple: **try the rule-based path first. If it can resolve the question
+(`Intent.is_answerable()`), answer it there — fast, free, zero risk. If it can't, fall through to
+the LLM path.** This is exactly what `CLAUDE.md`'s own phase-4 note describes, and it's cheap to
+keep — the parser, planner, and entity resolver already exist (~185 lines total) and the resolver's
+schema already matches the real warehouse (`game_logs`, `players`), not just the old 5-player seed.
 
 ```
 question
    ↓
-[ cache lookup ]                     ← Nick (a local model takes 2-5s; caching makes the demo feel real)
+[ cache lookup ]                          ← Nick (a local model takes 2-5s; caching makes the demo feel real)
    ↓ miss
-[ build_prompt + few-shot ]          ← Ashish
+[ RULE-BASED GATE — parser.py → planner.py ]   ← exists (Ashish owns tuning it)
+   ↓ Intent.is_answerable() ?
+   ├── YES → build_sql (template, allow-listed) → DuckDB execute → AnswerCard(path="rule")
+   │
+   └── NO  ↓
+       [ build_prompt + few-shot ]        ← Ashish
+          ↓
+       [ LLM provider: Ollama | Claude ]  ← Nick (one interface, two impls)
+          ↓
+       [ extract_sql ]                    ← exists
+          ↓
+       [ validate_sql — SELECT-only guard ] ← Nick hardens it
+          ↓ reject → repair loop (once) → still bad → REFUSE
+       [ DuckDB execute ]                 ← exists
+          ↓
+       AnswerCard(path="llm")
    ↓
-[ LLM provider: Ollama | Claude ]    ← Nick (one interface, two impls)
+AnswerCard { answer, sql, rows, refused, reason, path }
    ↓
-[ extract_sql ]                      ← exists
-   ↓
-[ validate_sql — SELECT-only guard ] ← Nick hardens it
-   ↓ reject → repair loop (once) → still bad → REFUSE
-[ DuckDB execute ]                   ← exists
-   ↓
-AnswerCard { answer, sql, rows, refused, reason }
-   ↓
-[ FastAPI /api/ask ] → [ web UI ]    ← Nick
+[ FastAPI /api/ask ] → [ web UI ]         ← Nick
 ```
 
 **The non-negotiables from `CLAUDE.md` still hold and are all satisfied by this design:** the model
 only writes language (SQL text), DuckDB does every arithmetic operation, nothing executes without
 passing the allow-list guard, and an unresolvable question returns a refusal rather than a number.
+The rule-based gate doesn't weaken any of that — it's strictly *more* conservative than the LLM path,
+since it never generates free-form SQL at all.
+
+**Why this is worth the extra plumbing, not just extra safety:** the transparency card is the whole
+product idea (`CLAUDE.md`: "every answer carries the SQL and the rows it came from"). Showing
+`path: "rule"` vs `path: "llm"` on the card *is* that idea, made visible — it tells the person asking
+exactly how sure the system is. That's a better demo than a single path, not just a safer one.
 
 ### The contract — write this on day 1, before anything else
 
@@ -79,7 +110,7 @@ parallel without blocking each other:
 ```python
 # src/statlas/types.py
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
 @dataclass
 class AnswerCard:
@@ -90,24 +121,29 @@ class AnswerCard:
     rows: list[dict] = field(default_factory=list)   # what the query returned
     refused: bool = False
     reason: str | None = None       # why, if refused
-    model: str | None = None
+    path: Literal["rule", "llm"] | None = None   # which engine answered
+    model: str | None = None        # only set when path == "llm"
     latency_ms: float | None = None
     cached: bool = False
 
 def answer(question: str) -> AnswerCard: ...
 ```
 
-Ashish implements `answer()`. Nick builds the server and UI against a **stub** that returns a
-hard-coded `AnswerCard` — so the frontend can be finished before the engine works, and neither of
-you ever sits waiting on the other. Agree on this file first, commit it, then diverge.
+Ashish implements `answer()` — including the gate itself: try `parser.parse` + `planner.build_sql`
+first, fall through to the LLM path on `PlanError` or `not intent.is_answerable()`. Nick builds the
+server and UI against a **stub** that returns a hard-coded `AnswerCard` — so the frontend can be
+finished before the engine works, and neither of you ever sits waiting on the other. Agree on this
+file first, commit it, then diverge.
 
 ### Branch strategy — stop the juggling
 
 The branch split has cost you more time than any technical problem in this repo. Collapse it:
 
 ```bash
-git switch -c mvp data-exploration          # start from the half with the real data
-git checkout refs/heads/learning -- tests/  # bring the eval harness across
+git switch -c mvp data-exploration                                   # start from the half with the real data
+git checkout refs/heads/learning -- tests/                            # the eval harness
+git checkout refs/heads/learning -- src/statlas/nlu src/statlas/query src/statlas/entities src/statlas/__init__.py
+                                                                       # the rule-based gate (parser/planner/resolver)
 ```
 
 **Everything for the next 3 weeks happens on `mvp`.** One branch, two people, normal PRs. `learning`
@@ -137,7 +173,7 @@ plan slides — nothing here is time-critical, and the order matters more than t
 
 | # | Session | Definition of done |
 |---|---|---|
-| **6** | **Promote it out of `experiments/`.** Create `src/statlas/sql_agent.py` with `answer(question) -> AnswerCard`, importing `build_prompt`/`extract_sql`/`validate_sql`/`execute_on_warehouse` rather than rewriting them. | `python -c "from statlas.sql_agent import answer; print(answer('...'))"` works |
+| **6** | **Promote it out of `experiments/` and wire the gate.** Create `src/statlas/sql_agent.py` with `answer(question) -> AnswerCard`. Inside: try `parser.parse` + `planner.build_sql` first (port from `learning` branch — point the entity resolver's queries at the real `players`/`game_logs` tables, no logic changes needed); on `PlanError`/unresolved, fall through to the LLM path, importing `build_prompt`/`extract_sql`/`validate_sql`/`execute_on_warehouse` rather than rewriting them. Set `path` on the returned card either way. | `answer("How many points did LeBron average in 2013?")` returns `path="rule"`; a leaderboard question returns `path="llm"` |
 | **7** | **Repair loop.** On guard rejection or DuckDB error, re-prompt **once** with the error text appended. Cap at one retry — two retries is where latency stops being demoable. | Eval re-run showing the delta from repair alone |
 | **8** | **Qualifier metadata.** Your own day-7 finding: the min-games qualifier is a *no-op* on per-game counting stats but *decisive* on rate stats (unqualified 3P% leaders were four bigs at 100% on one attempt). Encode per-metric thresholds as a dict in code — planner-owned, never model-generated. | `QUALIFIERS = {"fg3_pct": {"min_gp": 40, "min_fg3a": 3.0}, ...}` enforced post-hoc |
 | **9** | **The refusal path.** After a failed repair, return `AnswerCard(refused=True, reason=...)`. Test it with deliberately impossible questions ("who had the best vibes in 2019?"). | Three nonsense questions all refuse cleanly, none invent a number |
@@ -222,7 +258,7 @@ directly into session 10's eval set.
 | **The local 7B model is just bad at this** (< 8/16) | Moderate | Don't grind. Switch to the Claude API in week 2 instead of week 3 — the point of the plan is a working product, and you already said you'd get there once you understood the shape. Nick's provider interface makes this a one-line change. |
 | **Week 3 frontend slips** | Moderate | It's the last week for a reason. A polished CLI plus a real accuracy number is still a legitimate MVP; the UI is the part you can cut. |
 | **Sessions don't happen** | Based on the last 3 months — likely | The plan is ordered, not dated. Sessions 1-5 are the ones that matter most; everything after compounds from them. Missing a week costs a week, not the project. |
-| **Scope creep back into the p0 pipeline** | High | The rule-based `parser.py`/`planner.py` are *not* in this plan. Don't merge them in. One path only. |
+| **Gate threshold gets fuzzy** | Moderate | `Intent.is_answerable()` is a clean boolean today (player + metric both resolved); keep it that way. Resist the urge to make the rule-based path "smarter" mid-sprint — if a question needs more than the fixed template, that's what the LLM path is for. Growing the rule-based path is a v2 idea, not an MVP one. |
 
 **The honest version:** 15 hours to a demoable web app is tight but real, and only because the
 warehouse, the guard, and the harness already exist. If you're going to lose time anywhere, lose it

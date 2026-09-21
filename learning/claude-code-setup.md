@@ -140,11 +140,13 @@ here — the repo's own docs are partly out of date relative to what's on disk.
 
 ```
 Read these, in this order, before doing anything:
-  1. learning/MVP-3-WEEK-PLAN.md          — the plan we're executing
+  1. learning/MVP-3-WEEK-PLAN.md          — the plan we're executing (§1 has the architecture)
   2. CLAUDE.md                             — architecture constraints (non-negotiable)
   3. experiments/v1_nba_storage_retrieval_benchmark/SUMMARY.md
   4. experiments/v1_nba_storage_retrieval_benchmark/pipeline/s4_text_to_sql.py
   5. experiments/v1_nba_storage_retrieval_benchmark/pipeline/s4_sql_guard.py
+  6. src/statlas/nlu/parser.py, src/statlas/query/planner.py,
+     src/statlas/entities/resolver.py   — on the `learning` branch; the rule-based gate
 
 Context: I'm building the 3-week MVP in that plan. I have ~1 hour a day. A collaborator
 (strong SWE, security + AI infrastructure background) owns the service layer, the SQL guard,
@@ -153,18 +155,23 @@ ownership map. Don't touch his files.
 
 Today is Session 1. Do these, in order, and stop after each for me to confirm:
 
-  1. Create the `mvp` branch from `data-exploration`, and bring `tests/` across from `learning`.
+  1. Create the `mvp` branch from `data-exploration`. Bring across from `learning`:
+     `tests/` (the eval harness) and `src/statlas/{nlu,query,entities}/` (the rule-based gate).
   2. Write `src/statlas/types.py` containing the AnswerCard dataclass exactly as specified in
-     the plan's §1. Nothing else in that file.
+     the plan's §1, including the `path` field. Nothing else in that file.
   3. Tell me the exact commands to install Ollama and pull qwen2.5-coder:7b on macOS, and how
      to verify the model responds.
 
 Rules for this whole project:
+  - Every question tries the rule-based gate first (parser.py -> planner.py). Only what it
+    can't resolve (Intent.is_answerable() is False) goes to the LLM. Don't skip the gate and
+    don't widen what it handles — see plan §1 and the risk table for why.
   - The LLM writes SQL. DuckDB does every arithmetic operation. Never compute or recall a stat.
   - Nothing executes without passing validate_sql first.
-  - If a question can't be answered, refuse — never invent a number.
-  - Reuse what exists in experiments/ rather than rewriting it. build_prompt, extract_sql,
-    validate_sql and execute_on_warehouse all already work.
+  - If a question can't be answered by either path, refuse — never invent a number.
+  - Reuse what exists in experiments/ and the rule-based gate rather than rewriting them.
+    build_prompt, extract_sql, validate_sql, execute_on_warehouse, parser.parse, and
+    planner.build_sql all already work.
   - When you're unsure whether something exists, read the file. Several docs in this repo are
     out of date relative to what's actually on disk.
 ```
