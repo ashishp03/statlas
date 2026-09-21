@@ -18,7 +18,7 @@ Project: AI-powered sports stats answer engine (a better StatMuse).
 | **Foundations (roadmap.md)** | **Stage 3 — Transformers & attention ✅ DONE** → next **Stage 4 (LLMs)** | Stage 3 complete 2026-06-13: 3B1B + Illustrated Transformer + Attention §3 read; `softmax`/`scaled_dot_product_attention`/`causal_mask` implemented from scratch, all ✅ tests pass. Stages 1–2 were revision (skipped) |
 | **Env** | uv on the Mac, Python 3.13 | `uv sync` + `.venv` registered as Jupyter kernel; 3.14 blocked by `gensim` wheels |
 | **Reference built** | EDA on real NBA data | `days/day5/eda/` — report + 6 figures + cached CSVs |
-| **Latest artifacts** | Worked example (2026-09-13) + drafted slash command (2026-09-15) + `/eval` branch-blocker diagnosis (2026-09-16) | `days/day7/qualifier_worked_example.md` — DuckDB `RANK() OVER` + `QUALIFY`; qualifier is a no-op on per-game counting stats, decisive on rate stats. `days/day8/draft-eval-command.md` — the T-B `/eval` slash command, written out; needs only a copy into `.claude/commands/` — but **paste it on `learning`**: `tests/` does not exist on `data-exploration` (found 09-16, see `days/day9/summary.md`) |
+| **Latest artifacts** | Worked example (2026-09-13) + drafted slash command (2026-09-15) + `/eval` branch-blocker diagnosis (2026-09-16) + **harness verified green 5/5 (2026-09-20)** | `days/day7/qualifier_worked_example.md` — DuckDB `RANK() OVER` + `QUALIFY`; qualifier is a no-op on per-game counting stats, decisive on rate stats. `days/day8/draft-eval-command.md` — the T-B `/eval` slash command, written out; needs only a copy into `.claude/commands/` — but **paste it on `learning`**: `tests/` does not exist on `data-exploration` (found 09-16, see `days/day9/summary.md`). `tests/run_eval.py` was run by the coach 09-20 and is **green, 5/5, self-bootstrapping the DuckDB seed** — nothing is broken behind the `/eval` item; `days/day10/install-eval.sh` now does the install in one command |
 | **Parked** | Build plan (`curriculum.md`) | revive after foundations |
 
 Repo note: the `p0` scaffold (`parser.py`, template `planner.py`, `executor.py`, answer cards)
@@ -451,3 +451,35 @@ is the **baseline + ship target** for when we return to building.
   it and report the accuracy line — or the error, which is equally useful (~5 min). Stretch: **B2 —
   DIN-SQL** (arXiv 2304.11015), ~45 min.
   *Completed: branch-mismatch blocker on the `/eval` item diagnosed (this session). Awaiting Ashish's input on the rest.*
+- **2026-09-20 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting &
+  tool calling)**. Verified today: no commits on any branch since 09-16's coach commit (`ab6c174`),
+  and the only files touched in the repo in the last 7 days are the coach's own day7–day9 files.
+  Nothing new reported completed. Flexible timeline, no rush — it's a Sunday, and a quiet stretch
+  is fine. **This run closed the last open question behind the `/eval` item instead of re-assigning
+  it.** 09-16 diagnosed *why* the paste kept failing (no `tests/` on `data-exploration`) but could
+  not confirm the harness itself worked — the sandbox lacked `duckdb`/`rapidfuzz` and the install
+  timed out. Installed them today, extracted the `learning` tree with `git archive` and ran
+  `python tests/run_eval.py`: **5/5 = 100%**, all five golden questions passing (Wemby ±4.40 vs OKC,
+  Wemby 28.60 PPG vs OKC, LeBron 27.75 PPG 2013, Jokić 10.00 APG playoffs, Wemby 60 total REB vs
+  OKC), and the script **self-bootstraps its DuckDB seed** (5 players, 15 game logs) so there is no
+  setup step. Two things follow: the p0 baseline is *verified* working rather than assumed, and the
+  eval set is thin — 5 questions against M7's target of 40–50, which makes **growing the eval set**
+  the natural follow-on once `/eval` exists (and every M4 gold NL→SQL pair can double as an eval
+  case). Also shipped `days/day10/install-eval.sh` — it switches nothing, but creates
+  `.claude/commands/` and extracts the command body out of `days/day8/draft-eval-command.md`
+  automatically, reducing the Track-2 item from "mkdir + find the fenced block + paste" to one
+  `bash` line; the script was executed in this session and verified to produce a correct 20-line
+  `eval.md`. Track 1 is **deliberately unchanged for the third run** (3B1B "Large Language Models
+  explained briefly", ~7 min): churning the topic every run has not helped, and it remains the
+  smallest possible move on the roadmap's actual next stage. Housekeeping flags unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` +
+  `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` still untracked on
+  `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on its branch though its
+  worktree path `~/Desktop/Projects/statlas-learning` is gone from disk; ~15 stale/locked worktrees
+  plus ~20 broken refs still need a local `git worktree prune`.
+  Suggested — T1: 3B1B **"Large Language Models explained briefly"** (~7 min) — Stage 4, first contact.
+  T2: `git switch learning` then `bash learning/days/day10/install-eval.sh`, then type `/eval`
+  (~2 min; the harness is confirmed green, so it will print `Accuracy: 5/5 = 100%`). Stretch:
+  **B2 — DIN-SQL** (arXiv 2304.11015), ~45 min.
+  *Completed: eval harness run and verified green 5/5 by the coach + one-command installer shipped
+  (this session). Awaiting Ashish's input on the rest.*
