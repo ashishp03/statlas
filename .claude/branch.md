@@ -34,29 +34,11 @@ Explore NBA data api, find its structure, restrcitions, and understand how to us
   `CLAUDE.md` already covers it)
 
 ## Rolling log (most recent first)
-- 2026-07-18 — Built `experiments/v1_nba_storage_retrieval_benchmark/` — a self-contained storage/retrieval
-  + text-to-SQL benchmark on **real** modern-era data (S1 pulled 14.8k player-seasons, 140k game logs, 102k
-  shots, BBRef advanced). Materialized **8 store formats** + an nba↔bbref `canonical_id` crosswalk (590
-  matched / 2269 refused); **all 8 stores returned 128/128 eval answers exactly**; recommendation = **DuckDB
-  over season-partitioned Parquet** (Parquet ~5× smaller than CSV/SQLite; CSV ~100× slower on warm reads).
-  SELECT-only SQL guard + text-to-SQL bake-off (MOCK 16/16; real Ollama models pending). Vector experiment:
-  **0% exact as a stat store, 94% few-shot** → "vector DB or parquet?" = different jobs. S2–S6 + docs were
-  built by a background **multi-agent workflow** (executor→verifier→reviewer; custom `.claude/agents/`,
-  15/20 agents clean, report module capped by usage limit but code landed). Added **`ask.py`** — interactive
-  NL→guarded-SQL→DuckDB Q&A over the warehouse (prints the SQL, refuses rather than guesses; LeBron 24.43
-  pts/70g 2025 verified). Two-tier eval tolerance (D6: 1e-7 gate, 0.1 for `known` anchors). **Relaxed the
-  uv-run rule project-wide**: `python` runs files, uv manages deps (hook + all docs). Started NLU learning
-  module `03-nlu-intent-parsing` on a `learning-nlu` worktree. `.python-version` now reads **3.13** (earlier
-  3.12/3.13 FLAG appears reconciled).
-- 2026-06-22 — Inherited the shared Claude Code automation setup from `main` via `git merge main`
-  (PreToolUse hooks: uv-only Bash guard + branch-aware edit guard that blocks `src/statlas/**` here;
-  `data-source-scout` subagent; `run-notebook` skill; `context7` MCP). `branch.md` preserved via `merge=ours`.
-- 2026-06-21 — Re-ran `notebooks/initial_eda.ipynb` and saved it (commit `1f16534`); the only change was a
-  kernelspec refresh (`statlas (3.12.13)` → `statlas (3.13.8.final.0)`). FLAG: `.python-version` pins **3.12**
-  but the active `.venv`/kernel is **3.13** — reconcile (either repin or rebuild the env on 3.12).
-- 2026-06-21 — Built `notebooks/initial_eda_v2.ipynb`: empirically mapped endpoint history boundaries
-  (LeagueDash/ShotChart/PBPv3 → 1996-97, tracking → 2013-14, LeagueLeaders → 1951-52), native-vs-derived
-  advanced metrics (ratings/USG/TS/PIE native; PER/BPM/VORP/WS not NBA-provided), and alternative sources
-  (added `basketball_reference_web_scraper` + `balldontlie` as deps). Found V2 box-score/PBP endpoints
-  deprecated → use V3. Filled Scope + Branch-specific-instructions TODOs above.
-- 2026-06-13 — branch created from main.
+- 2026-06-22 — Added the shared Claude Code automation setup (commit `5226551`): PreToolUse hooks
+  (`guard-bash.sh` forces uv over bare python/pip/jupyter; `guard-edits.sh` protects `uv.lock`/`*.duckdb`
+  and branch-aware-blocks `src/statlas/**` edits while on `data-exploration`), wired in `.claude/settings.json`;
+  `data-source-scout` subagent; user-only `run-notebook` skill; `context7` MCP (`.mcp.json`). Lives on the
+  trunk so feature branches inherit it via `git merge main` and new branches off `main` get it automatically.
+- 2026-06-13 — Trunk seeded: brought the uv toolchain and the root context/setup docs
+  (`CLAUDE.md`, `README.md`, branch-model infra) over from the `learning` snapshot. Product code
+  and study material intentionally stay on their feature branches.
