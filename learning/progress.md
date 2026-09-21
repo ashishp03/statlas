@@ -513,3 +513,19 @@ is the **baseline + ship target** for when we return to building.
   each session's definition of done *is* the exercise, since four graded notebooks already exist
   unopened and adding homework at 1h/day is how the last three months went.
   *Completed: plan + brief + setup doc shipped (this session).*
+- **2026-09-21 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting &
+  tool calling)**. Track 2 mode: **MVP build sprint**, Session 1 of 15 (plan shipped 2026-09-20, not
+  yet started). Verified today: no commits on any branch since 09-20's three MVP-plan commits
+  (`b19db46`, `1965f3c`, `8100be4`); no `mvp` branch exists yet. Nothing new reported completed —
+  first day after a mode change, no rush. Suggested — T1: 3Blue1Brown **"Large Language Models
+  explained briefly"** (~7 min) — same small offer as the last several runs, still open, Stage 4
+  first contact. T2: **MVP Session 1 — "Unblock and install"**: repo cleanup
+  (`claude-code-setup.md`, ~10 min), `git switch -c mvp data-exploration` +
+  `git checkout refs/heads/learning -- tests/` and the rule-based gate files, install Ollama +
+  `ollama pull qwen2.5-coder:7b`, write and commit `src/statlas/types.py` (~45-60 min). Stretch:
+  Session 2 — run the real text-to-SQL harness against the model once installed and just record the
+  score, no fixing yet. Housekeeping flags unchanged: `experiments/v1_nba_storage_retrieval_benchmark/`
+  + `ask.py` + `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` still untracked on
+  `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on its branch though its
+  worktree path is gone from disk; broken refs/stale worktrees await a local cleanup (Session 1 now
+  covers this via `claude-code-setup.md`). *Completed: (awaiting Ashish's input.)*
