@@ -529,3 +529,23 @@ is the **baseline + ship target** for when we return to building.
   `data-exploration`; `learning-nlu` (module 03, commit `37222fd`) safe on its branch though its
   worktree path is gone from disk; broken refs/stale worktrees await a local cleanup (Session 1 now
   covers this via `claude-code-setup.md`). *Completed: (awaiting Ashish's input.)*
+- **2026-09-22 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting &
+  tool calling)**. Track 2 mode: **MVP build sprint**, Session 1 of 15 (assigned 09-21, still not
+  started — day11's "what I actually did" is blank). Verified today: no commits on any branch since
+  09-21's coach commit (`986d082`); no `mvp` branch exists yet. Nothing new reported completed — just
+  one day since the last run, flexible timeline, no rush. Suggested — T1: 3Blue1Brown **"Large
+  Language Models explained briefly"** (~7 min) — same small offer, 5th run running (deliberately
+  unchanged; also noted that MVP Session 1 below covers the same ground hands-on if only one track
+  gets touched today — running a real local LLM is arguably a better Stage-4 first contact than the
+  video). T2: **MVP Session 1 — "Unblock and install"** unchanged from 09-21 (repo cleanup via
+  `claude-code-setup.md`, `git switch -c mvp data-exploration`, pull in the eval harness + rule-based
+  gate from `learning`, install Ollama + `ollama pull qwen2.5-coder:7b`, write+commit
+  `src/statlas/types.py`), ~45-60 min — fine to split across two sittings. Stretch: Session 2 — run
+  the real text-to-SQL harness against the installed model and just record the score, no fixing yet.
+  Housekeeping flags unchanged: `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` +
+  `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` still untracked on `data-exploration`;
+  `learning-nlu` worktree path gone from disk (branch itself safe); broken refs/stale worktrees still
+  await a local `git worktree prune` (this run's own commit hit a stale `.git/index.lock` in the main
+  checkout that couldn't be cleared — permission-blocked — so it was committed via git plumbing
+  instead; worth checking for a leftover git process/lock file locally). *Completed: (awaiting
+  Ashish's input.)*
