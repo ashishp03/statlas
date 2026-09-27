@@ -549,3 +549,22 @@ is the **baseline + ship target** for when we return to building.
   checkout that couldn't be cleared — permission-blocked — so it was committed via git plumbing
   instead; worth checking for a leftover git process/lock file locally). *Completed: (awaiting
   Ashish's input.)*
+- **2026-09-27 (coach run)** — Foundations: Stage 3 ✅; next **Stage 4 (LLMs) → Stage 5 (prompting &
+  tool calling)**. Track 2 mode: **MVP build sprint**, Session 1 of 15 (assigned 09-21, still not
+  started — 5-day quiet stretch since 09-22's run, no rush). Verified today: no commits on any branch
+  since 09-22's coach commit (`bb672bb`); no `mvp` branch exists; Ollama not installed on this
+  machine; `docs/planning`/`docs/onboarding`/`docs/research` still untracked on `data-exploration`
+  (dated to the 09-20/09-21 planning session, unchanged). Suggested — T1: 3Blue1Brown "Large Language
+  Models explained briefly" (~7 min) — same offer, 6th run, noted MVP Session 1 covers the same
+  ground hands-on. T2: Session 1 split into its smallest slice — just install Ollama + pull
+  `qwen2.5-coder:7b` (~15-20 min), deferring the branch cut/cleanup/`types.py` to a second sitting
+  since the full bundle hasn't landed in 3 offers. Stretch: once installed, run the real
+  text-to-SQL harness and just record the score. Housekeeping flags unchanged:
+  `experiments/v1_nba_storage_retrieval_benchmark/` + `ask.py` +
+  `RESEARCH.md`/`ONBOARDING.md`/`AGENTS.md`/`.claude/agents/*` still untracked on `data-exploration`;
+  `learning-nlu` worktree path gone from disk (branch itself safe); ~27 broken refs/stale worktrees
+  still await a local `git worktree prune`.
+  Suggested — T1: 3B1B **"Large Language Models explained briefly"** (~7 min) — Stage 4, first contact.
+  T2: `brew install ollama && ollama serve`, `ollama pull qwen2.5-coder:7b` (~15-20 min). Stretch:
+  run the real text-to-SQL harness once installed, record the score.
+  *Completed: (awaiting Ashish's input.)*
