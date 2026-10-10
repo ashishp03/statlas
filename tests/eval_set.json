@@ -1,0 +1,11 @@
+{
+  "description": "Golden eval set. Each item: a question + the known-correct answer computed from seed data. This is your SCOREBOARD (Study Plan Phase 6) - run it after every change and watch accuracy.",
+  "tolerance": 0.05,
+  "cases": [
+    {"q": "What was Wemby's average plus/minus vs OKC in the playoffs?", "expected": 4.4},
+    {"q": "How many points did Wemby average against OKC in the playoffs?", "expected": 28.6},
+    {"q": "What were LeBron's average points in 2013?", "expected": 27.75},
+    {"q": "What was the Joker's average assists in the playoffs?", "expected": 10.0},
+    {"q": "How many total rebounds did Wemby have vs OKC in the playoffs?", "expected": 60.0}
+  ]
+}

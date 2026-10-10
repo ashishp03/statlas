@@ -3,3 +3,4 @@
 #     git config merge.ours.driver true
 # (That line is local config, not committed, so run it once on every machine you clone to.)
 .claude/branch.md merge=ours
+.codex/branch.md merge=ours

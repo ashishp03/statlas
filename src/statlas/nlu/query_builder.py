@@ -8,7 +8,7 @@ CLAUDE.md pins as byte-stable so upgrades never ripple downstream:
     player_id, season, game_date, opponent_abbr, is_playoff, min, pts, reb, ast, plus_minus
 
 This module is warehouse-agnostic on purpose: it never opens a connection or resolves a player
-name itself (that's `statlas.entities.resolver`'s job, given a live DB's own `players` table).
+name itself (that's `statlas.entities.crosswalk`'s job, given a live DB's own `players` table).
 `build_sql` takes an already-resolved `player_id`, so it is a pure function you can unit-test with
 no DuckDB, no on-disk warehouse, nothing — matching the root architecture rule that NLU/parsing
 never touches data, it only produces the query the database will run.
@@ -38,7 +38,7 @@ TEAM_ALIASES = {
 }
 
 # Capitalized-span regex used to pull player-name candidates out of a free-text question, for
-# callers that then hand the candidates to statlas.entities.resolver.best_match_from_candidates.
+# callers that then hand the candidates to statlas.entities.crosswalk.best_match_from_candidates.
 NAME_CANDIDATE_RE = re.compile(r"[A-Z][a-zA-Z.'-]+(?:\s+[A-Z][a-zA-Z.'-]+)*")
 
 
