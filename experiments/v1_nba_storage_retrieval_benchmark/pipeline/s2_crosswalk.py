@@ -27,7 +27,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[3] / "src"))  # 
 import polars as pl
 
 import config
-from statlas.entities.resolver import best_match  # moved out of pipeline/ — permanent, reusable
+from statlas.entities.crosswalk import best_match  # moved out of pipeline/ — permanent, reusable
 
 # A wrong cross-source join is worse than none: only accept a fuzzy hit this confident.
 MATCH_THRESHOLD = 88

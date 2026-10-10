@@ -1,101 +1,90 @@
-"""Fuzzy name resolution — refuse rather than guess.
+"""Entity resolver — maps human references to canonical IDs.
 
-Consolidates a pattern two places in experiments/v1_nba_storage_retrieval_benchmark independently
-built (fuzzy-match a name against a set of candidates, accept only above a confidence threshold,
-otherwise refuse):
-  - pipeline/s2_crosswalk.py's `_match_slug` — bridges nba_api player_id <-> Basketball-Reference
-    bbref_slug by name. Now imports `best_match` from here instead of holding its own copy.
-  - ask.py's `resolve_player` — resolves a player name typed in a natural-language question against
-    the real `players` table. Now imports `best_match_from_candidates` from here.
+"Wemby", "the Joker", "KD" -> a real player_id.  This is HALF of StatMuse's accuracy.
 
-Both are instances of the same non-negotiable (root CLAUDE.md): entity resolution never guesses
-below a confidence floor — an unresolved name returns None, never a wrong match, because a wrong
-join/lookup silently corrupts a stat, which is worse than refusing.
-
-Requires `rapidfuzz` (already a project dependency).
+v0 approach (Study Plan Phase 2): a nickname dictionary + fuzzy matching.
+Later you can upgrade to an embedding-based / NER linker, but start here — a good
+dictionary beats a fancy model for the head of the distribution.
 """
 from __future__ import annotations
 
-from rapidfuzz import fuzz, process, utils
+from dataclasses import dataclass
+
+from rapidfuzz import fuzz, process
+
+import duckdb
+
+# Hand-curated nicknames -> canonical full name. Extend freely.
+NICKNAMES = {
+    "wemby": "Victor Wembanyama",
+    "the alien": "Victor Wembanyama",
+    "lebron": "LeBron James",
+    "king james": "LeBron James",
+    "bron": "LeBron James",
+    "the joker": "Nikola Jokic",
+    "joker": "Nikola Jokic",
+    "kd": "Kevin Durant",
+    "durantula": "Kevin Durant",
+    "steph": "Stephen Curry",
+    "chef curry": "Stephen Curry",
+}
+
+# Common team-name aliases -> abbreviation used in game_logs.opponent_abbr / players.team_abbr
+TEAM_ALIASES = {
+    "okc": "OKC", "thunder": "OKC", "oklahoma city": "OKC",
+    "lakers": "LAL", "lal": "LAL", "los angeles lakers": "LAL",
+    "nuggets": "DEN", "denver": "DEN", "den": "DEN",
+    "warriors": "GSW", "golden state": "GSW", "gsw": "GSW",
+    "suns": "PHX", "phoenix": "PHX", "phx": "PHX",
+    "wolves": "MIN", "timberwolves": "MIN", "min": "MIN",
+    "heat": "MIA", "miami": "MIA",
+    "celtics": "BOS", "boston": "BOS",
+    "bulls": "CHI", "chicago": "CHI",
+    "knicks": "NYK", "new york": "NYK",
+    "spurs": "SAS", "san antonio": "SAS",
+}
 
 
-def best_match(
-    name: str | None,
-    choices: dict[str, str],
-    threshold: int,
-    scorer=fuzz.WRatio,
-    processor=utils.default_process,
-) -> str | None:
-    """Best key in `choices` whose value fuzzy-matches `name`, or None if nothing clears `threshold`.
+@dataclass
+class ResolvedPlayer:
+    player_id: int
+    full_name: str
+    score: float  # match confidence 0-100
 
-    `choices` maps {key: display_name} — e.g. {bbref_slug: full_name} or {player_id: full_name}.
-    rapidfuzz matches `name` against the VALUES and, because `choices` is a Mapping, returns
-    `(matched_value, score, matched_key)`, so the key comes back directly with no second lookup.
 
-    Pure function, no I/O — unit-testable on a tiny synthetic dict. `threshold` has no default on
-    purpose: callers must decide their own confidence bar (the two known call sites used 88 for a
-    cross-source join and 85 for interactive question-answering — pick deliberately, don't inherit
-    a number that was tuned for a different failure cost).
+def _all_players(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
+    rows = con.execute("SELECT full_name, player_id FROM players").fetchall()
+    return {name: pid for name, pid in rows}
+
+
+def resolve_player(text: str, con: duckdb.DuckDBPyConnection, min_score: float = 75.0) -> ResolvedPlayer | None:
+    """Find the best-matching player for a free-text reference.
+
+    Strategy: (1) nickname lookup, (2) fuzzy match against real names.
+    Returns None if nothing clears `min_score` — i.e. the engine should say "I don't know"
+    rather than guess. Refusing to guess is a feature, not a bug.
     """
-    if name is None or not choices:
+    if not text:
         return None
-    res = process.extractOne(name, choices, scorer=scorer, processor=processor)
-    if res is not None and res[1] >= threshold:
-        return res[2]
+    key = text.strip().lower()
+    players = _all_players(con)
+
+    # 1) Exact nickname hit -> canonical name.
+    canonical = NICKNAMES.get(key)
+    if canonical and canonical in players:
+        return ResolvedPlayer(players[canonical], canonical, 100.0)
+
+    # 2) Fuzzy match the raw text against full names.
+    match = process.extractOne(text, list(players.keys()), scorer=fuzz.WRatio)
+    if match and match[1] >= min_score:
+        name = match[0]
+        return ResolvedPlayer(players[name], name, float(match[1]))
+
     return None
 
 
-def best_match_from_candidates(
-    candidates: list[str],
-    choices: dict[str, str],
-    threshold: int,
-    scorer=fuzz.WRatio,
-) -> tuple[str, str] | None:
-    """Try several candidate spans (e.g. capitalized substrings pulled from a free-text question)
-    against `choices` and return the (candidate, matched_key) pair with the single best score
-    across all of them, or None if none clears `threshold`.
-
-    This is `resolve_player`'s pattern generalized: a free-text question rarely isolates the entity
-    name cleanly, so the caller extracts several plausible spans and this picks the best-scoring one.
-    """
-    best_cand, best_key, best_score = None, None, 0
-    for cand in candidates:
-        res = process.extractOne(cand, choices, scorer=scorer)
-        if res is not None and res[1] > best_score:
-            best_cand, best_key, best_score = cand, res[2], res[1]
-    if best_key is None or best_score < threshold:
+def resolve_team(text: str) -> str | None:
+    """Map a team reference to its abbreviation, or None."""
+    if not text:
         return None
-    return best_cand, best_key
-
-
-# --------------------------------------------------------------------------- self-test
-def _selftest() -> int:
-    choices = {"jokic-nikol01": "Nikola Jokic", "james-lebro01": "LeBron James"}
-    fails = 0
-
-    cases = [
-        (best_match("Nikola Jokic", choices, threshold=88), "jokic-nikol01"),
-        (best_match("Nikola Jokić", choices, threshold=88), "jokic-nikol01"),  # accented variant
-        (best_match("Some Random Name", choices, threshold=88), None),        # below threshold -> refuse
-        (best_match(None, choices, threshold=88), None),                      # no name -> refuse
-        (best_match("Nikola Jokic", {}, threshold=88), None),                 # no choices -> refuse
-    ]
-    for got, expected in cases:
-        ok = got == expected
-        fails += 0 if ok else 1
-        print(f"  [{'PASS' if ok else 'FAIL'}] best_match -> {got!r} (expected {expected!r})")
-
-    got = best_match_from_candidates(
-        ["How many points did LeBron James average"], choices, threshold=85
-    )
-    ok = got is not None and got[1] == "james-lebro01"
-    fails += 0 if ok else 1
-    print(f"  [{'PASS' if ok else 'FAIL'}] best_match_from_candidates -> {got!r}")
-
-    print(f"{5 + 1 - fails}/6 cases behaved as expected" + ("" if fails == 0 else f"  ({fails} UNEXPECTED)"))
-    return 0 if fails == 0 else 1
-
-
-if __name__ == "__main__":
-    import sys
-    sys.exit(_selftest())
+    return TEAM_ALIASES.get(text.strip().lower())

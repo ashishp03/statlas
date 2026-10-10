@@ -38,7 +38,7 @@ import config
 # The SELECT-only guard, entity resolver, and rule-based NLU/query-builder this experiment built are
 # now permanent, reusable modules in src/statlas (see that package's docstrings for why).
 from statlas.query.sql_guard import validate_sql
-from statlas.entities.resolver import best_match_from_candidates
+from statlas.entities.crosswalk import best_match_from_candidates
 from statlas.nlu.query_builder import build_sql as _build_sql_for_player, find_metric, name_candidates
 
 WAREHOUSE = config.STORES_DIR / "warehouse.duckdb"
